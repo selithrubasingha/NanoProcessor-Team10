@@ -15,7 +15,7 @@
 library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
 
-entity mux_4bit_8way is
+entity mux_8way_4bit is
     Port (
         I0  : in  STD_LOGIC_VECTOR(3 downto 0);   -- Register 0 output
         I1  : in  STD_LOGIC_VECTOR(3 downto 0);   -- Register 1 output
@@ -28,9 +28,9 @@ entity mux_4bit_8way is
         Sel : in  STD_LOGIC_VECTOR(2 downto 0);   -- 3-bit register address
         Y   : out STD_LOGIC_VECTOR(3 downto 0)
     );
-end mux_4bit_8way;
+end mux_8way_4bit;
 
-architecture Behavioral of mux_4bit_8way is
+architecture Behavioral of mux_8way_4bit is
 begin
     process(I0, I1, I2, I3, I4, I5, I6, I7, Sel)
     begin
