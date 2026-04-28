@@ -23,17 +23,44 @@ entity program_counter is
 end program_counter;
 
 architecture Structural of program_counter is
-
-    -- The Enable pin of every flip-flop is tied high ('1') because the PC
-    -- must always update on every rising edge (either PC+1 or jump address).
-    constant ALWAYS_EN : STD_LOGIC := '1';
+    
+    component D_FF
+        port (
+            D     : in  std_logic;
+            Res   : in  std_logic;
+            Clk   : in  std_logic;
+            Q     : out std_logic;
+            Qbar  : out std_logic
+        );
+    end component;
 
 begin
-    DFF0 : entity work.d_flip_flop
-        port map (NextAddr(0), Clk, Reset, ALWAYS_EN, CurrAddr(0));
-    DFF1 : entity work.d_flip_flop
-        port map (NextAddr(1), Clk, Reset, ALWAYS_EN, CurrAddr(1));
-    DFF2 : entity work.d_flip_flop
-        port map (NextAddr(2), Clk, Reset, ALWAYS_EN, CurrAddr(2));
+
+    DFF0 : D_FF
+        port map (
+            NextAddr(0),
+            Reset,
+            Clk,
+            CurrAddr(0),
+            open
+        );
+
+    DFF1 : D_FF
+        port map (
+            NextAddr(1),
+            Reset,
+            Clk,
+            CurrAddr(1),
+            open
+        );
+
+    DFF2 : D_FF
+        port map (
+            NextAddr(2),
+            Reset,
+            Clk,
+            CurrAddr(2),
+            open
+        );
 
 end Structural;
