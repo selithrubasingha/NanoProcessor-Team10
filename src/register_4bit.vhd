@@ -20,9 +20,52 @@ entity register_4bit is
 end register_4bit;
 
 architecture Structural of register_4bit is
+ component d_flip_flop
+        Port (
+            D     : in  STD_LOGIC;
+            Clk   : in  STD_LOGIC;
+            Reset : in  STD_LOGIC;
+            En    : in  STD_LOGIC;
+            Q     : out STD_LOGIC
+        );
+    end component;
+
 begin
-    DFF0 : entity work.d_flip_flop port map (D(0), Clk, Reset, Enable, Q(0));
-    DFF1 : entity work.d_flip_flop port map (D(1), Clk, Reset, Enable, Q(1));
-    DFF2 : entity work.d_flip_flop port map (D(2), Clk, Reset, Enable, Q(2));
-    DFF3 : entity work.d_flip_flop port map (D(3), Clk, Reset, Enable, Q(3));
+
+    DFF0 : d_flip_flop
+        port map (
+            D     => D(0),
+            Clk   => Clk,
+            Reset => Reset,
+            En    => Enable,
+            Q     => Q(0)
+        );
+
+    DFF1 : d_flip_flop
+        port map (
+            D     => D(1),
+            Clk   => Clk,
+            Reset => Reset,
+            En    => Enable,
+            Q     => Q(1)
+        );
+
+    DFF2 : d_flip_flop
+        port map (
+            D     => D(2),
+            Clk   => Clk,
+            Reset => Reset,
+            En    => Enable,
+            Q     => Q(2)
+        );
+
+    DFF3 : d_flip_flop
+        port map (
+            D     => D(3),
+            Clk   => Clk,
+            Reset => Reset,
+            En    => Enable,
+            Q     => Q(3)
+        );
+
 end Structural;
