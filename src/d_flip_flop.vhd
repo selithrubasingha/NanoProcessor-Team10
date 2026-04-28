@@ -1,6 +1,5 @@
 ----------------------------------------------------------------------------------
 
--- Engineer: Thiseni Rathnayake
 
 -- Module Name: D_FF - Behavioral
 
