@@ -20,27 +20,25 @@ use IEEE.STD_LOGIC_1164.ALL;
 --library UNISIM;
 --use UNISIM.VComponents.all;
 
-entity D_FF is
-    Port ( D : in STD_LOGIC;
-           Res : in STD_LOGIC;
-           Clk : in STD_LOGIC;
-           Q : out STD_LOGIC;
-           Qbar : out STD_LOGIC);
-end D_FF;
+entity d_flip_flop is
+   Port ( D : in STD_LOGIC;
+        Clk : in  STD_LOGIC;
+        Reset : in  STD_LOGIC;
+        Enable : in  STD_LOGIC;
+        Q : out STD_LOGIC );
+end d_flip_flop;
 
-architecture Behavioral of D_FF is
-
+architecture Behavioral of d_flip_flop is
 begin
-    process (Clk) begin
-     if (rising_edge(Clk)) then
-         if Res = '1' then
-             Q <= '0';
-             Qbar <= '1';
-     else
-         Q<= D;
-         Qbar <= not D;
-     end if;
-    end if;
-   end process;
-
+    process(Clk, Reset)
+    begin
+        if Reset = '1' then
+            Q <= '0';
+        elsif rising_edge(Clk) then
+            if Enable = '1' then
+                Q <= D;
+            end if;
+        end if;
+    end process;
 end Behavioral;
+
