@@ -17,4 +17,5 @@ begin
         a <= '1'; b <= '1'; wait for 10 ns;
         wait;
     end process;
+    -- hello (test change)
 end Behavioral;
