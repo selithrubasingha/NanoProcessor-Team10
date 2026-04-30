@@ -25,7 +25,7 @@ architecture Structural of register_4bit is
             D     : in  STD_LOGIC;
             Clk   : in  STD_LOGIC;
             Reset : in  STD_LOGIC;
-            En    : in  STD_LOGIC;
+            Enable    : in  STD_LOGIC;
             Q     : out STD_LOGIC
         );
     end component;
@@ -37,7 +37,7 @@ begin
             D     => D(0),
             Clk   => Clk,
             Reset => Reset,
-            En    => Enable,
+            Enable    => Enable,
             Q     => Q(0)
         );
 
@@ -46,7 +46,7 @@ begin
             D     => D(1),
             Clk   => Clk,
             Reset => Reset,
-            En    => Enable,
+            Enable    => Enable,
             Q     => Q(1)
         );
 
@@ -55,7 +55,7 @@ begin
             D     => D(2),
             Clk   => Clk,
             Reset => Reset,
-            En    => Enable,
+            Enable    => Enable,
             Q     => Q(2)
         );
 
@@ -64,7 +64,7 @@ begin
             D     => D(3),
             Clk   => Clk,
             Reset => Reset,
-            En    => Enable,
+            Enable    => Enable,
             Q     => Q(3)
         );
 

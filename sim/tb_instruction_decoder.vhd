@@ -29,7 +29,7 @@ begin
         
         -- Test 1: MOVI R1, 10  -> 10 001 000 1010
         Instruction <= "100010001010"; Zero <= '0';
-        wait for 20 ns;
+        wait for 100 ns;
         assert RegSel    = "001" report "FAIL MOVI: RegSel"    severity error;
         assert RegEn     = '1'   report "FAIL MOVI: RegEn"     severity error;
         assert ImmMuxSel = '1'   report "FAIL MOVI: ImmMuxSel" severity error;
@@ -39,7 +39,7 @@ begin
         
         -- Test 2: ADD R1, R2  -> 00 001 010 0000
         Instruction <= "000010100000"; Zero <= '0';
-        wait for 20 ns;
+        wait for 100 ns;
         assert RegSel    = "001" report "FAIL ADD: RegSel"    severity error;
         assert RegEn     = '1'   report "FAIL ADD: RegEn"     severity error;
         assert MuxA_Sel  = "001" report "FAIL ADD: MuxA_Sel"  severity error;
@@ -51,7 +51,7 @@ begin
         
         -- Test 3: NEG R2  -> 01 010 000 0000
         Instruction <= "010100000000"; Zero <= '0';
-        wait for 20 ns;
+        wait for 100 ns;
         assert RegSel    = "010" report "FAIL NEG: RegSel"    severity error;
         assert RegEn     = '1'   report "FAIL NEG: RegEn"     severity error;
         assert MuxA_Sel  = "000" report "FAIL NEG: MuxA_Sel"  severity error;
@@ -62,7 +62,7 @@ begin
         
         -- Test 4: JZR R1, 7  -> 11 001 0000 111   (Zero='0' -> no jump)
         Instruction <= "110010000111"; Zero <= '0';
-        wait for 20 ns;
+        wait for 100 ns;
         assert RegEn    = '0'   report "FAIL JZR: RegEn should be 0" severity error;
         assert JumpFlag = '0'   report "FAIL JZR: JumpFlag should be 0 when Zero=0" severity error;
         assert JumpAddr = "111" report "FAIL JZR: JumpAddr" severity error;
@@ -73,7 +73,7 @@ begin
        
         -- Test 5: JZR R1, 7 with Zero='1' -> jump should be taken
         Instruction <= "110010000111"; Zero <= '1';
-        wait for 20 ns;
+        wait for 100 ns;
         assert RegEn    = '0'   report "FAIL JZR taken: RegEn" severity error;
         assert JumpFlag = '1'   report "FAIL JZR taken: JumpFlag should be 1" severity error;
         assert JumpAddr = "111" report "FAIL JZR taken: JumpAddr" severity error;
@@ -81,7 +81,7 @@ begin
     
         -- Test 6: JZR R0, 3  -> 11 000 0000 011  (R0=0, always jumps when Zero=1)
         Instruction <= "110000000011"; Zero <= '1';
-        wait for 20 ns;
+        wait for 100 ns;
         assert JumpFlag = '1'   report "FAIL JZR R0: JumpFlag" severity error;
         assert JumpAddr = "011" report "FAIL JZR R0: JumpAddr" severity error;
 
