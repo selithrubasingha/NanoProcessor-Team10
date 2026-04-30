@@ -23,7 +23,7 @@ architecture Structural of program_counter is
             D     : in  STD_LOGIC;
             Clk   : in  STD_LOGIC;
             Reset : in  STD_LOGIC;
-            En    : in  STD_LOGIC;
+            Enable    : in  STD_LOGIC;
             Q     : out STD_LOGIC
         );
     end component;
@@ -37,7 +37,7 @@ begin
             D     => NextAddr(0),
             Clk   => Clk,
             Reset => Reset,
-            En    => ALWAYS_EN,
+            Enable    => ALWAYS_EN,
             Q     => CurrAddr(0)
         );
 
@@ -46,7 +46,7 @@ begin
             D     => NextAddr(1),
             Clk   => Clk,
             Reset => Reset,
-            En    => ALWAYS_EN,
+            Enable    => ALWAYS_EN,
             Q     => CurrAddr(1)
         );
 
@@ -55,7 +55,7 @@ begin
             D     => NextAddr(2),
             Clk   => Clk,
             Reset => Reset,
-            En    => ALWAYS_EN,
+            Enable    => ALWAYS_EN,
             Q     => CurrAddr(2)
         );
 
