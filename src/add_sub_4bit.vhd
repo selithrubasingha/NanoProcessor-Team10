@@ -1,47 +1,37 @@
-
 library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
+use IEEE.NUMERIC_STD.ALL; -- Required for arithmetic
 
 entity add_sub_4bit is
     Port (
         A        : in  STD_LOGIC_VECTOR(3 downto 0);
         B        : in  STD_LOGIC_VECTOR(3 downto 0);
-        AddSub   : in  STD_LOGIC;   -- '0' = Add,  '1' = Subtract
+        AddSub   : in  STD_LOGIC;
         Result   : out STD_LOGIC_VECTOR(3 downto 0);
         Overflow : out STD_LOGIC;
         Zero     : out STD_LOGIC
     );
 end add_sub_4bit;
 
-architecture Structural of add_sub_4bit is
-
-    signal B_mod  : STD_LOGIC_VECTOR(3 downto 0);  -- B possibly inverted
-    signal Sum_s  : STD_LOGIC_VECTOR(3 downto 0);
-    signal Cout_s : STD_LOGIC;
-    signal C3_s   : STD_LOGIC;
-
+architecture Behavioral of add_sub_4bit is
+    signal a_ext, b_ext, res_ext : signed(4 downto 0);
 begin
-    -- Conditionally invert B bit-by-bit
-    B_mod(0) <= B(0) XOR AddSub;
-    B_mod(1) <= B(1) XOR AddSub;
-    B_mod(2) <= B(2) XOR AddSub;
-    B_mod(3) <= B(3) XOR AddSub;
+    -- Convert to signed and extend to 5 bits to detect overflow/carry
+    a_ext <= signed('0' & A);
+    b_ext <= signed('0' & B);
 
-    -- Instantiate the 4-bit RCA
-    -- Cin = AddSub: when subtracting, Cin=1 completes two's-complement negation
+    process(a_ext, b_ext, AddSub)
+    begin
+        if AddSub = '0' then
+            res_ext <= a_ext + b_ext;
+        else
+            res_ext <= a_ext - b_ext;
+        end if;
+    end process;
 
-    RCA : entity work.rca_4bit
-        port map (
-            A    => A,
-            B    => B_mod,
-            Cin  => AddSub,
-            Sum  => Sum_s,
-            Cout => Cout_s,
-            C3   => C3_s
-        );
-
-    Result   <= Sum_s;
-    Overflow <= Cout_s XOR C3_s;   -- signed overflow detection
-    Zero     <= '1' when Sum_s = "0000" else '0';
-
-end Structural;
+    Result <= std_logic_vector(res_ext(3 downto 0));
+    Zero   <= '1' when res_ext(3 downto 0) = "0000" else '0';
+    
+    -- Overflow detection (simplified for Vivado optimization)
+    Overflow <= res_ext(4); 
+end Behavioral;
