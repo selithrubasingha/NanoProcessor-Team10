@@ -16,7 +16,12 @@ end nanoprocessor;
 
 architecture Structural of nanoprocessor is
 
-   
+   component Slow_Clk
+        Port (
+            Clk_in  : in STD_LOGIC;
+            Clk_out : out STD_LOGIC
+        );
+    end component;
 
     -- Instruction Bus: ROM -> Decoder
     signal InstructionBus : STD_LOGIC_VECTOR(11 downto 0);
@@ -59,13 +64,22 @@ architecture Structural of nanoprocessor is
     signal R6 : STD_LOGIC_VECTOR(3 downto 0);
     signal R7 : STD_LOGIC_VECTOR(3 downto 0);
 
+    signal clk_slow : STD_LOGIC;
+
 begin
+
+    -- Add this instantiation
+    CLOCK_DIVIDER : Slow_Clk
+        port map (
+            Clk_in  => Clk,       -- Raw 100 MHz from the board
+            Clk_out => clk_slow   -- The new 1 Hz slowed down clock
+        );
 
     
     PC : entity work.program_counter
         port map (
             NextAddr => PCNextAddr,
-            Clk      => Clk,
+            Clk      => clk_slow,  -- CHANGED
             Reset    => Reset,
             CurrAddr => PCCurrAddr
         );
@@ -101,7 +115,7 @@ begin
             D      => DataBus,
             RegSel => RegSel,
             RegEn  => RegEn,
-            Clk    => Clk,
+            Clk    => clk_slow,    -- CHANGED
             Reset  => Reset,
             R0     => R0,
             R1     => R1,
