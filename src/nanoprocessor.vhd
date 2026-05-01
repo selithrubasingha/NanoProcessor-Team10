@@ -47,6 +47,8 @@ architecture Structural of nanoprocessor is
     signal R6 : STD_LOGIC_VECTOR(3 downto 0);
     signal R7 : STD_LOGIC_VECTOR(3 downto 0);
 
+    signal seg_out : std_logic_vector(6 downto 0);
+
     ------------------------------------------------------------------
     -- COMPONENT DECLARATIONS
     ------------------------------------------------------------------
@@ -145,7 +147,14 @@ architecture Structural of nanoprocessor is
             Y   : out STD_LOGIC_VECTOR(2 downto 0)
         );
     end component;
-
+        
+    component sevenseg_rom
+    port (
+        address : in  std_logic_vector(3 downto 0);
+        data    : out std_logic_vector(6 downto 0)
+    );
+end component;
+        
 begin
 
     PC : program_counter
@@ -191,6 +200,8 @@ begin
 
     PC_MUX : mux_2way_3bit
         port map (A => PCPlusOne, B => JumpAddr, Sel => JumpFlag, Y => PCNextAddr);
+    SEG7 : sevenseg_rom
+        port map (address => R7, data => seg_out);
 
     R7_Out   <= R7;
     ZeroFlag <= ALU_Zero;
