@@ -9,6 +9,7 @@ entity nanoprocessor is
         Overflow : out STD_LOGIC;
         ZeroFlag : out STD_LOGIC;
         SevenSeg : out std_logic_vector(6 downto 0);
+        Anode    : out STD_LOGIC_VECTOR(3 downto 0)
     );
 end nanoprocessor;
 
@@ -154,7 +155,7 @@ architecture Structural of nanoprocessor is
         address : in  std_logic_vector(3 downto 0);
         data    : out std_logic_vector(6 downto 0)
     );
-end component;
+    end component;
         
 begin
 
