@@ -1,0 +1,367 @@
+#-----------------------------------------------------------
+# Vivado v2018.1 (64-bit)
+# SW Build 2188600 on Wed Apr  4 18:40:38 MDT 2018
+# IP Build 2185939 on Wed Apr  4 20:55:05 MDT 2018
+# Start of session at: Thu Apr 30 12:57:14 2026
+# Process ID: 5272
+# Current directory: C:/Users/devik/NanoProcessor-Team10/nanoprocessor/nanoprocessor.runs/synth_1
+# Command line: vivado.exe -log nanoprocessor.vds -product Vivado -mode batch -messageDb vivado.pb -notrace -source nanoprocessor.tcl
+# Log file: C:/Users/devik/NanoProcessor-Team10/nanoprocessor/nanoprocessor.runs/synth_1/nanoprocessor.vds
+# Journal file: C:/Users/devik/NanoProcessor-Team10/nanoprocessor/nanoprocessor.runs/synth_1\vivado.jou
+#-----------------------------------------------------------
+source nanoprocessor.tcl -notrace
+Command: synth_design -top nanoprocessor -part xc7a35tcpg236-1
+Starting synth_design
+Attempting to get a license for feature 'Synthesis' and/or device 'xc7a35t'
+INFO: [Common 17-349] Got license for feature 'Synthesis' and/or device 'xc7a35t'
+INFO: Launching helper process for spawning children vivado processes
+INFO: Helper process launched with PID 25012 
+---------------------------------------------------------------------------------
+Starting Synthesize : Time (s): cpu = 00:00:05 ; elapsed = 00:00:05 . Memory (MB): peak = 358.133 ; gain = 99.191
+---------------------------------------------------------------------------------
+WARNING: [Synth 8-1565] actual for formal port a is neither a static name nor a globally static expression [C:/Users/devik/NanoProcessor-Team10/src/adder_3bit.vhd:19]
+WARNING: [Synth 8-1565] actual for formal port b is neither a static name nor a globally static expression [C:/Users/devik/NanoProcessor-Team10/src/adder_3bit.vhd:20]
+INFO: [Synth 8-638] synthesizing module 'nanoprocessor' [C:/Users/devik/NanoProcessor-Team10/src/nanoprocessor.vhd:17]
+INFO: [Synth 8-638] synthesizing module 'program_counter' [C:/Users/devik/NanoProcessor-Team10/src/program_counter.vhd:18]
+INFO: [Synth 8-3491] module 'd_flip_flop' declared at 'C:/Users/devik/NanoProcessor-Team10/src/d_flip_flop.vhd:22' bound to instance 'DFF0' of component 'd_flip_flop' [C:/Users/devik/NanoProcessor-Team10/src/program_counter.vhd:35]
+INFO: [Synth 8-638] synthesizing module 'd_flip_flop' [C:/Users/devik/NanoProcessor-Team10/src/d_flip_flop.vhd:30]
+INFO: [Synth 8-256] done synthesizing module 'd_flip_flop' (1#1) [C:/Users/devik/NanoProcessor-Team10/src/d_flip_flop.vhd:30]
+INFO: [Synth 8-3491] module 'd_flip_flop' declared at 'C:/Users/devik/NanoProcessor-Team10/src/d_flip_flop.vhd:22' bound to instance 'DFF1' of component 'd_flip_flop' [C:/Users/devik/NanoProcessor-Team10/src/program_counter.vhd:44]
+INFO: [Synth 8-3491] module 'd_flip_flop' declared at 'C:/Users/devik/NanoProcessor-Team10/src/d_flip_flop.vhd:22' bound to instance 'DFF2' of component 'd_flip_flop' [C:/Users/devik/NanoProcessor-Team10/src/program_counter.vhd:53]
+INFO: [Synth 8-256] done synthesizing module 'program_counter' (2#1) [C:/Users/devik/NanoProcessor-Team10/src/program_counter.vhd:18]
+INFO: [Synth 8-638] synthesizing module 'program_rom' [C:/Users/devik/NanoProcessor-Team10/src/program_rom.vhd:11]
+INFO: [Synth 8-226] default block is never used [C:/Users/devik/NanoProcessor-Team10/src/program_rom.vhd:15]
+INFO: [Synth 8-256] done synthesizing module 'program_rom' (3#1) [C:/Users/devik/NanoProcessor-Team10/src/program_rom.vhd:11]
+INFO: [Synth 8-638] synthesizing module 'instruction_decoder' [C:/Users/devik/NanoProcessor-Team10/src/instruction_decoder.vhd:20]
+INFO: [Synth 8-256] done synthesizing module 'instruction_decoder' (4#1) [C:/Users/devik/NanoProcessor-Team10/src/instruction_decoder.vhd:20]
+INFO: [Synth 8-638] synthesizing module 'register_bank' [C:/Users/devik/NanoProcessor-Team10/src/register_bank.vhd:25]
+INFO: [Synth 8-3491] module 'decoder_3to8' declared at 'C:/Users/devik/NanoProcessor-Team10/src/decoder_3to8.vhd:4' bound to instance 'DEC' of component 'decoder_3to8' [C:/Users/devik/NanoProcessor-Team10/src/register_bank.vhd:51]
+INFO: [Synth 8-638] synthesizing module 'decoder_3to8' [C:/Users/devik/NanoProcessor-Team10/src/decoder_3to8.vhd:9]
+INFO: [Synth 8-3491] module 'decoder_2to4' declared at 'C:/Users/devik/NanoProcessor-Team10/src/decoder_2to4.vhd:4' bound to instance 'Decoder_2_to_4_0' of component 'decoder_2to4' [C:/Users/devik/NanoProcessor-Team10/src/decoder_3to8.vhd:23]
+INFO: [Synth 8-638] synthesizing module 'decoder_2to4' [C:/Users/devik/NanoProcessor-Team10/src/decoder_2to4.vhd:10]
+INFO: [Synth 8-226] default block is never used [C:/Users/devik/NanoProcessor-Team10/src/decoder_2to4.vhd:17]
+INFO: [Synth 8-256] done synthesizing module 'decoder_2to4' (5#1) [C:/Users/devik/NanoProcessor-Team10/src/decoder_2to4.vhd:10]
+INFO: [Synth 8-3491] module 'decoder_2to4' declared at 'C:/Users/devik/NanoProcessor-Team10/src/decoder_2to4.vhd:4' bound to instance 'Decoder_2_to_4_1' of component 'decoder_2to4' [C:/Users/devik/NanoProcessor-Team10/src/decoder_3to8.vhd:29]
+INFO: [Synth 8-256] done synthesizing module 'decoder_3to8' (6#1) [C:/Users/devik/NanoProcessor-Team10/src/decoder_3to8.vhd:9]
+INFO: [Synth 8-3491] module 'register_4bit' declared at 'C:/Users/devik/NanoProcessor-Team10/src/register_4bit.vhd:12' bound to instance 'REG1' of component 'register_4bit' [C:/Users/devik/NanoProcessor-Team10/src/register_bank.vhd:71]
+INFO: [Synth 8-638] synthesizing module 'register_4bit' [C:/Users/devik/NanoProcessor-Team10/src/register_4bit.vhd:22]
+INFO: [Synth 8-3491] module 'd_flip_flop' declared at 'C:/Users/devik/NanoProcessor-Team10/src/d_flip_flop.vhd:22' bound to instance 'DFF0' of component 'd_flip_flop' [C:/Users/devik/NanoProcessor-Team10/src/register_4bit.vhd:35]
+INFO: [Synth 8-3491] module 'd_flip_flop' declared at 'C:/Users/devik/NanoProcessor-Team10/src/d_flip_flop.vhd:22' bound to instance 'DFF1' of component 'd_flip_flop' [C:/Users/devik/NanoProcessor-Team10/src/register_4bit.vhd:44]
+INFO: [Synth 8-3491] module 'd_flip_flop' declared at 'C:/Users/devik/NanoProcessor-Team10/src/d_flip_flop.vhd:22' bound to instance 'DFF2' of component 'd_flip_flop' [C:/Users/devik/NanoProcessor-Team10/src/register_4bit.vhd:53]
+INFO: [Synth 8-3491] module 'd_flip_flop' declared at 'C:/Users/devik/NanoProcessor-Team10/src/d_flip_flop.vhd:22' bound to instance 'DFF3' of component 'd_flip_flop' [C:/Users/devik/NanoProcessor-Team10/src/register_4bit.vhd:62]
+INFO: [Synth 8-256] done synthesizing module 'register_4bit' (7#1) [C:/Users/devik/NanoProcessor-Team10/src/register_4bit.vhd:22]
+INFO: [Synth 8-3491] module 'register_4bit' declared at 'C:/Users/devik/NanoProcessor-Team10/src/register_4bit.vhd:12' bound to instance 'REG2' of component 'register_4bit' [C:/Users/devik/NanoProcessor-Team10/src/register_bank.vhd:72]
+INFO: [Synth 8-3491] module 'register_4bit' declared at 'C:/Users/devik/NanoProcessor-Team10/src/register_4bit.vhd:12' bound to instance 'REG3' of component 'register_4bit' [C:/Users/devik/NanoProcessor-Team10/src/register_bank.vhd:73]
+INFO: [Synth 8-3491] module 'register_4bit' declared at 'C:/Users/devik/NanoProcessor-Team10/src/register_4bit.vhd:12' bound to instance 'REG4' of component 'register_4bit' [C:/Users/devik/NanoProcessor-Team10/src/register_bank.vhd:74]
+INFO: [Synth 8-3491] module 'register_4bit' declared at 'C:/Users/devik/NanoProcessor-Team10/src/register_4bit.vhd:12' bound to instance 'REG5' of component 'register_4bit' [C:/Users/devik/NanoProcessor-Team10/src/register_bank.vhd:75]
+INFO: [Synth 8-3491] module 'register_4bit' declared at 'C:/Users/devik/NanoProcessor-Team10/src/register_4bit.vhd:12' bound to instance 'REG6' of component 'register_4bit' [C:/Users/devik/NanoProcessor-Team10/src/register_bank.vhd:76]
+INFO: [Synth 8-3491] module 'register_4bit' declared at 'C:/Users/devik/NanoProcessor-Team10/src/register_4bit.vhd:12' bound to instance 'REG7' of component 'register_4bit' [C:/Users/devik/NanoProcessor-Team10/src/register_bank.vhd:77]
+INFO: [Synth 8-256] done synthesizing module 'register_bank' (8#1) [C:/Users/devik/NanoProcessor-Team10/src/register_bank.vhd:25]
+INFO: [Synth 8-638] synthesizing module 'mux_8way_4bit' [C:/Users/devik/NanoProcessor-Team10/src/mux_8way_4bit.vhd:33]
+INFO: [Synth 8-226] default block is never used [C:/Users/devik/NanoProcessor-Team10/src/mux_8way_4bit.vhd:37]
+INFO: [Synth 8-256] done synthesizing module 'mux_8way_4bit' (9#1) [C:/Users/devik/NanoProcessor-Team10/src/mux_8way_4bit.vhd:33]
+INFO: [Synth 8-638] synthesizing module 'add_sub_4bit' [C:/Users/devik/NanoProcessor-Team10/src/add_sub_4bit.vhd:16]
+INFO: [Synth 8-256] done synthesizing module 'add_sub_4bit' (10#1) [C:/Users/devik/NanoProcessor-Team10/src/add_sub_4bit.vhd:16]
+INFO: [Synth 8-638] synthesizing module 'mux_2way_4bit' [C:/Users/devik/NanoProcessor-Team10/src/mux_2way_4bit.vhd:24]
+INFO: [Synth 8-256] done synthesizing module 'mux_2way_4bit' (11#1) [C:/Users/devik/NanoProcessor-Team10/src/mux_2way_4bit.vhd:24]
+INFO: [Synth 8-638] synthesizing module 'adder_3bit' [C:/Users/devik/NanoProcessor-Team10/src/adder_3bit.vhd:12]
+INFO: [Synth 8-638] synthesizing module 'rca_4bit' [C:/Users/devik/NanoProcessor-Team10/src/rca_4bit.vhd:19]
+INFO: [Synth 8-3491] module 'full_adder' declared at 'C:/Users/devik/NanoProcessor-Team10/src/full_adder.vhd:6' bound to instance 'FA0' of component 'full_adder' [C:/Users/devik/NanoProcessor-Team10/src/rca_4bit.vhd:39]
+INFO: [Synth 8-638] synthesizing module 'full_adder' [C:/Users/devik/NanoProcessor-Team10/src/full_adder.vhd:16]
+INFO: [Synth 8-256] done synthesizing module 'full_adder' (12#1) [C:/Users/devik/NanoProcessor-Team10/src/full_adder.vhd:16]
+INFO: [Synth 8-3491] module 'full_adder' declared at 'C:/Users/devik/NanoProcessor-Team10/src/full_adder.vhd:6' bound to instance 'FA1' of component 'full_adder' [C:/Users/devik/NanoProcessor-Team10/src/rca_4bit.vhd:48]
+INFO: [Synth 8-3491] module 'full_adder' declared at 'C:/Users/devik/NanoProcessor-Team10/src/full_adder.vhd:6' bound to instance 'FA2' of component 'full_adder' [C:/Users/devik/NanoProcessor-Team10/src/rca_4bit.vhd:57]
+INFO: [Synth 8-3491] module 'full_adder' declared at 'C:/Users/devik/NanoProcessor-Team10/src/full_adder.vhd:6' bound to instance 'FA3' of component 'full_adder' [C:/Users/devik/NanoProcessor-Team10/src/rca_4bit.vhd:66]
+INFO: [Synth 8-256] done synthesizing module 'rca_4bit' (13#1) [C:/Users/devik/NanoProcessor-Team10/src/rca_4bit.vhd:19]
+INFO: [Synth 8-256] done synthesizing module 'adder_3bit' (14#1) [C:/Users/devik/NanoProcessor-Team10/src/adder_3bit.vhd:12]
+INFO: [Synth 8-638] synthesizing module 'mux_2way_3bit' [C:/Users/devik/NanoProcessor-Team10/src/mux_2way_3bit.vhd:24]
+INFO: [Synth 8-256] done synthesizing module 'mux_2way_3bit' (15#1) [C:/Users/devik/NanoProcessor-Team10/src/mux_2way_3bit.vhd:24]
+INFO: [Synth 8-256] done synthesizing module 'nanoprocessor' (16#1) [C:/Users/devik/NanoProcessor-Team10/src/nanoprocessor.vhd:17]
+---------------------------------------------------------------------------------
+Finished Synthesize : Time (s): cpu = 00:00:06 ; elapsed = 00:00:06 . Memory (MB): peak = 410.836 ; gain = 151.895
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished Constraint Validation : Time (s): cpu = 00:00:06 ; elapsed = 00:00:06 . Memory (MB): peak = 410.836 ; gain = 151.895
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Loading Part and Timing Information
+---------------------------------------------------------------------------------
+Loading part: xc7a35tcpg236-1
+---------------------------------------------------------------------------------
+Finished Loading Part and Timing Information : Time (s): cpu = 00:00:06 ; elapsed = 00:00:06 . Memory (MB): peak = 410.836 ; gain = 151.895
+---------------------------------------------------------------------------------
+INFO: [Device 21-403] Loading part xc7a35tcpg236-1
+INFO: [Synth 8-5818] HDL ADVISOR - The operator resource <adder> is shared. To prevent sharing consider applying a KEEP on the output of the operator [C:/Users/devik/NanoProcessor-Team10/src/add_sub_4bit.vhd:25]
+INFO: [Synth 8-5544] ROM "Zero" won't be mapped to Block RAM because address size (4) smaller than threshold (5)
+---------------------------------------------------------------------------------
+Finished RTL Optimization Phase 2 : Time (s): cpu = 00:00:06 ; elapsed = 00:00:06 . Memory (MB): peak = 410.836 ; gain = 151.895
+---------------------------------------------------------------------------------
+
+Report RTL Partitions: 
++-+--------------+------------+----------+
+| |RTL Partition |Replication |Instances |
++-+--------------+------------+----------+
++-+--------------+------------+----------+
+No constraint files found.
+---------------------------------------------------------------------------------
+Start RTL Component Statistics 
+---------------------------------------------------------------------------------
+Detailed RTL Component Info : 
++---Adders : 
+	   3 Input      5 Bit       Adders := 1     
++---XORs : 
+	   3 Input      1 Bit         XORs := 4     
++---Registers : 
+	                1 Bit    Registers := 31    
++---Muxes : 
+	   8 Input     12 Bit        Muxes := 1     
+	   2 Input      5 Bit        Muxes := 1     
+	   2 Input      4 Bit        Muxes := 3     
+	   4 Input      4 Bit        Muxes := 2     
+	   2 Input      3 Bit        Muxes := 2     
+	   2 Input      1 Bit        Muxes := 1     
+---------------------------------------------------------------------------------
+Finished RTL Component Statistics 
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start RTL Hierarchical Component Statistics 
+---------------------------------------------------------------------------------
+Hierarchical RTL Component report 
+Module d_flip_flop 
+Detailed RTL Component Info : 
++---Registers : 
+	                1 Bit    Registers := 1     
+Module program_rom 
+Detailed RTL Component Info : 
++---Muxes : 
+	   8 Input     12 Bit        Muxes := 1     
+Module instruction_decoder 
+Detailed RTL Component Info : 
++---Muxes : 
+	   2 Input      3 Bit        Muxes := 1     
+Module decoder_2to4 
+Detailed RTL Component Info : 
++---Muxes : 
+	   2 Input      4 Bit        Muxes := 1     
+	   4 Input      4 Bit        Muxes := 1     
+Module add_sub_4bit 
+Detailed RTL Component Info : 
++---Adders : 
+	   3 Input      5 Bit       Adders := 1     
++---Muxes : 
+	   2 Input      5 Bit        Muxes := 1     
+	   2 Input      1 Bit        Muxes := 1     
+Module mux_2way_4bit 
+Detailed RTL Component Info : 
++---Muxes : 
+	   2 Input      4 Bit        Muxes := 1     
+Module full_adder 
+Detailed RTL Component Info : 
++---XORs : 
+	   3 Input      1 Bit         XORs := 1     
+Module mux_2way_3bit 
+Detailed RTL Component Info : 
++---Muxes : 
+	   2 Input      3 Bit        Muxes := 1     
+---------------------------------------------------------------------------------
+Finished RTL Hierarchical Component Statistics
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Part Resource Summary
+---------------------------------------------------------------------------------
+Part Resources:
+DSPs: 90 (col length:60)
+BRAMs: 100 (col length: RAMB18 60 RAMB36 30)
+---------------------------------------------------------------------------------
+Finished Part Resource Summary
+---------------------------------------------------------------------------------
+No constraint files found.
+---------------------------------------------------------------------------------
+Start Cross Boundary and Area Optimization
+---------------------------------------------------------------------------------
+Warning: Parallel synthesis criteria is not met 
+WARNING: [Synth 8-3332] Sequential element (REGBANK/REG4/DFF0/Q_reg) is unused and will be removed from module nanoprocessor.
+WARNING: [Synth 8-3332] Sequential element (REGBANK/REG4/DFF1/Q_reg) is unused and will be removed from module nanoprocessor.
+WARNING: [Synth 8-3332] Sequential element (REGBANK/REG4/DFF2/Q_reg) is unused and will be removed from module nanoprocessor.
+WARNING: [Synth 8-3332] Sequential element (REGBANK/REG4/DFF3/Q_reg) is unused and will be removed from module nanoprocessor.
+WARNING: [Synth 8-3332] Sequential element (REGBANK/REG5/DFF0/Q_reg) is unused and will be removed from module nanoprocessor.
+WARNING: [Synth 8-3332] Sequential element (REGBANK/REG5/DFF1/Q_reg) is unused and will be removed from module nanoprocessor.
+WARNING: [Synth 8-3332] Sequential element (REGBANK/REG5/DFF2/Q_reg) is unused and will be removed from module nanoprocessor.
+WARNING: [Synth 8-3332] Sequential element (REGBANK/REG5/DFF3/Q_reg) is unused and will be removed from module nanoprocessor.
+WARNING: [Synth 8-3332] Sequential element (REGBANK/REG6/DFF0/Q_reg) is unused and will be removed from module nanoprocessor.
+WARNING: [Synth 8-3332] Sequential element (REGBANK/REG6/DFF1/Q_reg) is unused and will be removed from module nanoprocessor.
+WARNING: [Synth 8-3332] Sequential element (REGBANK/REG6/DFF2/Q_reg) is unused and will be removed from module nanoprocessor.
+WARNING: [Synth 8-3332] Sequential element (REGBANK/REG6/DFF3/Q_reg) is unused and will be removed from module nanoprocessor.
+---------------------------------------------------------------------------------
+Finished Cross Boundary and Area Optimization : Time (s): cpu = 00:00:09 ; elapsed = 00:00:10 . Memory (MB): peak = 555.367 ; gain = 296.426
+---------------------------------------------------------------------------------
+
+Report RTL Partitions: 
++-+--------------+------------+----------+
+| |RTL Partition |Replication |Instances |
++-+--------------+------------+----------+
++-+--------------+------------+----------+
+No constraint files found.
+---------------------------------------------------------------------------------
+Start Timing Optimization
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished Timing Optimization : Time (s): cpu = 00:00:09 ; elapsed = 00:00:10 . Memory (MB): peak = 555.367 ; gain = 296.426
+---------------------------------------------------------------------------------
+
+Report RTL Partitions: 
++-+--------------+------------+----------+
+| |RTL Partition |Replication |Instances |
++-+--------------+------------+----------+
++-+--------------+------------+----------+
+---------------------------------------------------------------------------------
+Start Technology Mapping
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished Technology Mapping : Time (s): cpu = 00:00:09 ; elapsed = 00:00:10 . Memory (MB): peak = 555.395 ; gain = 296.453
+---------------------------------------------------------------------------------
+
+Report RTL Partitions: 
++-+--------------+------------+----------+
+| |RTL Partition |Replication |Instances |
++-+--------------+------------+----------+
++-+--------------+------------+----------+
+---------------------------------------------------------------------------------
+Start IO Insertion
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Flattening Before IO Insertion
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished Flattening Before IO Insertion
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Final Netlist Cleanup
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished Final Netlist Cleanup
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished IO Insertion : Time (s): cpu = 00:00:10 ; elapsed = 00:00:11 . Memory (MB): peak = 555.395 ; gain = 296.453
+---------------------------------------------------------------------------------
+
+Report Check Netlist: 
++------+------------------+-------+---------+-------+------------------+
+|      |Item              |Errors |Warnings |Status |Description       |
++------+------------------+-------+---------+-------+------------------+
+|1     |multi_driven_nets |      0|        0|Passed |Multi driven nets |
++------+------------------+-------+---------+-------+------------------+
+---------------------------------------------------------------------------------
+Start Renaming Generated Instances
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished Renaming Generated Instances : Time (s): cpu = 00:00:10 ; elapsed = 00:00:11 . Memory (MB): peak = 555.395 ; gain = 296.453
+---------------------------------------------------------------------------------
+
+Report RTL Partitions: 
++-+--------------+------------+----------+
+| |RTL Partition |Replication |Instances |
++-+--------------+------------+----------+
++-+--------------+------------+----------+
+---------------------------------------------------------------------------------
+Start Rebuilding User Hierarchy
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished Rebuilding User Hierarchy : Time (s): cpu = 00:00:10 ; elapsed = 00:00:11 . Memory (MB): peak = 555.395 ; gain = 296.453
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Renaming Generated Ports
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished Renaming Generated Ports : Time (s): cpu = 00:00:10 ; elapsed = 00:00:11 . Memory (MB): peak = 555.395 ; gain = 296.453
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Handling Custom Attributes
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished Handling Custom Attributes : Time (s): cpu = 00:00:10 ; elapsed = 00:00:11 . Memory (MB): peak = 555.395 ; gain = 296.453
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Renaming Generated Nets
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished Renaming Generated Nets : Time (s): cpu = 00:00:10 ; elapsed = 00:00:11 . Memory (MB): peak = 555.395 ; gain = 296.453
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Writing Synthesis Report
+---------------------------------------------------------------------------------
+
+Report BlackBoxes: 
++-+--------------+----------+
+| |BlackBox name |Instances |
++-+--------------+----------+
++-+--------------+----------+
+
+Report Cell Usage: 
++------+-----+------+
+|      |Cell |Count |
++------+-----+------+
+|1     |BUFG |     1|
+|2     |LUT2 |     1|
+|3     |LUT3 |     9|
+|4     |LUT4 |     1|
+|5     |LUT5 |     5|
+|6     |LUT6 |    11|
+|7     |FDCE |    19|
+|8     |IBUF |     2|
+|9     |OBUF |     6|
++------+-----+------+
+
+Report Instance Areas: 
++------+-----------+----------------+------+
+|      |Instance   |Module          |Cells |
++------+-----------+----------------+------+
+|1     |top        |                |    55|
+|2     |  PC       |program_counter |    25|
+|3     |    DFF0   |d_flip_flop_18  |     7|
+|4     |    DFF1   |d_flip_flop_19  |     1|
+|5     |    DFF2   |d_flip_flop_20  |    17|
+|6     |  REGBANK  |register_bank   |    21|
+|7     |    REG1   |register_4bit   |     6|
+|8     |      DFF0 |d_flip_flop_14  |     3|
+|9     |      DFF1 |d_flip_flop_15  |     1|
+|10    |      DFF2 |d_flip_flop_16  |     1|
+|11    |      DFF3 |d_flip_flop_17  |     1|
+|12    |    REG2   |register_4bit_0 |     4|
+|13    |      DFF0 |d_flip_flop_10  |     1|
+|14    |      DFF1 |d_flip_flop_11  |     1|
+|15    |      DFF2 |d_flip_flop_12  |     1|
+|16    |      DFF3 |d_flip_flop_13  |     1|
+|17    |    REG3   |register_4bit_1 |     7|
+|18    |      DFF0 |d_flip_flop_6   |     1|
+|19    |      DFF1 |d_flip_flop_7   |     2|
+|20    |      DFF2 |d_flip_flop_8   |     2|
+|21    |      DFF3 |d_flip_flop_9   |     2|
+|22    |    REG7   |register_4bit_2 |     4|
+|23    |      DFF0 |d_flip_flop     |     1|
+|24    |      DFF1 |d_flip_flop_3   |     1|
+|25    |      DFF2 |d_flip_flop_4   |     1|
+|26    |      DFF3 |d_flip_flop_5   |     1|
++------+-----------+----------------+------+
+---------------------------------------------------------------------------------
+Finished Writing Synthesis Report : Time (s): cpu = 00:00:10 ; elapsed = 00:00:11 . Memory (MB): peak = 555.395 ; gain = 296.453
+---------------------------------------------------------------------------------
+Synthesis finished with 0 errors, 0 critical warnings and 14 warnings.
+Synthesis Optimization Runtime : Time (s): cpu = 00:00:10 ; elapsed = 00:00:11 . Memory (MB): peak = 555.395 ; gain = 296.453
+Synthesis Optimization Complete : Time (s): cpu = 00:00:10 ; elapsed = 00:00:11 . Memory (MB): peak = 555.395 ; gain = 296.453
+INFO: [Project 1-571] Translating synthesized netlist
+INFO: [Netlist 29-17] Analyzing 2 Unisim elements for replacement
+INFO: [Netlist 29-28] Unisim Transformation completed in 0 CPU seconds
+INFO: [Project 1-570] Preparing netlist for logic optimization
+INFO: [Opt 31-138] Pushed 0 inverter(s) to 0 load pin(s).
+INFO: [Project 1-111] Unisim Transformation Summary:
+No Unisim elements were transformed.
+
+INFO: [Common 17-83] Releasing license: Synthesis
+67 Infos, 14 Warnings, 0 Critical Warnings and 0 Errors encountered.
+synth_design completed successfully
+synth_design: Time (s): cpu = 00:00:14 ; elapsed = 00:00:15 . Memory (MB): peak = 654.270 ; gain = 408.352
+INFO: [Common 17-1381] The checkpoint 'C:/Users/devik/NanoProcessor-Team10/nanoprocessor/nanoprocessor.runs/synth_1/nanoprocessor.dcp' has been generated.
+INFO: [runtcl-4] Executing : report_utilization -file nanoprocessor_utilization_synth.rpt -pb nanoprocessor_utilization_synth.pb
+report_utilization: Time (s): cpu = 00:00:00 ; elapsed = 00:00:00.015 . Memory (MB): peak = 654.270 ; gain = 0.000
+INFO: [Common 17-206] Exiting Vivado at Thu Apr 30 12:57:35 2026...
