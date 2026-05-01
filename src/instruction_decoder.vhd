@@ -5,6 +5,7 @@ entity instruction_decoder is
     Port (
         Instruction : in  STD_LOGIC_VECTOR(11 downto 0);
         Zero        : in  STD_LOGIC;
+        Negative    : in  STD_LOGIC;  -- NEW WIRE ADDED HERE
         RegSel      : out STD_LOGIC_VECTOR(2 downto 0);
         RegEn       : out STD_LOGIC;
         MuxA_Sel    : out STD_LOGIC_VECTOR(2 downto 0);
@@ -43,8 +44,9 @@ begin
 
     -- ALU control (ADD / AND)
 
-    AddSub <= Instruction(0) when isALU = '1' else '0';
-    -- 0 = ADD, 1 = AND
+    AddSub <= '1' when isNEG = '1' else 
+            Instruction(0) when isALU = '1' else 
+            '0';    -- 0 = ADD, 1 = AND
 
     -- Register enable
 
@@ -56,9 +58,9 @@ begin
     ImmMuxSel <= isMOVI;
 
     -- Jump control
+-- Jump control (Bit 3 = '0' for JZR, Bit 3 = '1' for JNEG)
 
-    JumpFlag <= Zero AND isJZR;
-
+    JumpFlag <= isJZR AND ( (Zero AND NOT Instruction(3)) OR (Negative AND Instruction(3)) );
 
     -- Mux A selection
 
