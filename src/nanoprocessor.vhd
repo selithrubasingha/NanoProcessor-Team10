@@ -7,7 +7,8 @@ entity nanoprocessor is
         Reset    : in  STD_LOGIC;
         R7_Out   : out STD_LOGIC_VECTOR(3 downto 0);
         Overflow : out STD_LOGIC;
-        ZeroFlag : out STD_LOGIC
+        ZeroFlag : out STD_LOGIC;
+        SevenSeg : out std_logic_vector(6 downto 0);
     );
 end nanoprocessor;
 
@@ -206,5 +207,6 @@ begin
     R7_Out   <= R7;
     ZeroFlag <= ALU_Zero;
     Overflow <= ALU_Overflow;
+    SevenSeg <= seg_out;
 
 end Structural;
