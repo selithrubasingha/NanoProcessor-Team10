@@ -21,39 +21,32 @@ architecture Structural of nanoprocessor is
     signal PCNextAddr : STD_LOGIC_VECTOR(2 downto 0);
     signal PCPlusOne  : STD_LOGIC_VECTOR(2 downto 0);
 
+  
+   
     signal MuxA_Out   : STD_LOGIC_VECTOR(3 downto 0);
     signal MuxB_Out   : STD_LOGIC_VECTOR(3 downto 0);
     signal ALU_Result : STD_LOGIC_VECTOR(3 downto 0);
-
     signal DataBus    : STD_LOGIC_VECTOR(3 downto 0);
 
     signal ALU_Zero     : STD_LOGIC;
     signal ALU_Overflow : STD_LOGIC;
 
+  
     signal RegSel    : STD_LOGIC_VECTOR(2 downto 0);
     signal RegEn     : STD_LOGIC;
     signal MuxA_Sel  : STD_LOGIC_VECTOR(2 downto 0);
     signal MuxB_Sel  : STD_LOGIC_VECTOR(2 downto 0);
-    signal AddSub    : STD_LOGIC;
     signal ImmVal    : STD_LOGIC_VECTOR(3 downto 0);
     signal ImmMuxSel : STD_LOGIC;
     signal JumpFlag  : STD_LOGIC;
     signal JumpAddr  : STD_LOGIC_VECTOR(2 downto 0);
 
-    signal R0 : STD_LOGIC_VECTOR(3 downto 0);
-    signal R1 : STD_LOGIC_VECTOR(3 downto 0);
-    signal R2 : STD_LOGIC_VECTOR(3 downto 0);
-    signal R3 : STD_LOGIC_VECTOR(3 downto 0);
-    signal R4 : STD_LOGIC_VECTOR(3 downto 0);
-    signal R5 : STD_LOGIC_VECTOR(3 downto 0);
-    signal R6 : STD_LOGIC_VECTOR(3 downto 0);
-    signal R7 : STD_LOGIC_VECTOR(3 downto 0);
+ 
+    signal R0, R1, R2, R3, R4, R5, R6, R7 : STD_LOGIC_VECTOR(3 downto 0);
 
     signal seg_out : std_logic_vector(6 downto 0);
 
-    ------------------------------------------------------------------
-    -- COMPONENT DECLARATIONS
-    ------------------------------------------------------------------
+ 
 
     component program_counter
         Port (
@@ -75,13 +68,18 @@ architecture Structural of nanoprocessor is
         Port (
             Instruction : in  STD_LOGIC_VECTOR(11 downto 0);
             Zero        : in  STD_LOGIC;
+
             RegSel      : out STD_LOGIC_VECTOR(2 downto 0);
             RegEn       : out STD_LOGIC;
+
             MuxA_Sel    : out STD_LOGIC_VECTOR(2 downto 0);
             MuxB_Sel    : out STD_LOGIC_VECTOR(2 downto 0);
-            AddSub      : out STD_LOGIC;
+
+            ALUop       : out STD_LOGIC_VECTOR(3 downto 0);
+
             ImmVal      : out STD_LOGIC_VECTOR(3 downto 0);
             ImmMuxSel   : out STD_LOGIC;
+
             JumpFlag    : out STD_LOGIC;
             JumpAddr    : out STD_LOGIC_VECTOR(2 downto 0)
         );
@@ -113,11 +111,11 @@ architecture Structural of nanoprocessor is
         );
     end component;
 
-    component add_sub_4bit
+    component alu_4bit
         Port (
             A        : in  STD_LOGIC_VECTOR(3 downto 0);
             B        : in  STD_LOGIC_VECTOR(3 downto 0);
-            AddSub   : in  STD_LOGIC;
+            ALUop    : in  STD_LOGIC_VECTOR(3 downto 0);
             Result   : out STD_LOGIC_VECTOR(3 downto 0);
             Overflow : out STD_LOGIC;
             Zero     : out STD_LOGIC
@@ -149,59 +147,86 @@ architecture Structural of nanoprocessor is
             Y   : out STD_LOGIC_VECTOR(2 downto 0)
         );
     end component;
-        
+
     component sevenseg_rom
-    port (
-        address : in  std_logic_vector(3 downto 0);
-        data    : out std_logic_vector(6 downto 0)
-    );
+        Port (
+            address : in  std_logic_vector(3 downto 0);
+            data    : out std_logic_vector(6 downto 0)
+        );
     end component;
-        
+
 begin
 
+    
     PC : program_counter
         port map (NextAddr => PCNextAddr, Clk => Clk, Reset => Reset, CurrAddr => PCCurrAddr);
 
     ROM : program_rom
         port map (Addr => PCCurrAddr, Instruction => InstructionBus);
 
+
     DECODER : instruction_decoder
         port map (
-            Instruction => InstructionBus, Zero => ALU_Zero,
-            RegSel => RegSel, RegEn => RegEn,
-            MuxA_Sel => MuxA_Sel, MuxB_Sel => MuxB_Sel,
-            AddSub => AddSub, ImmVal => ImmVal,
-            ImmMuxSel => ImmMuxSel, JumpFlag => JumpFlag, JumpAddr => JumpAddr
+            Instruction => InstructionBus,
+            Zero => ALU_Zero,
+
+            RegSel => RegSel,
+            RegEn => RegEn,
+
+            MuxA_Sel => MuxA_Sel,
+            MuxB_Sel => MuxB_Sel,
+
+            ALUop => open,   -- IMPORTANT: we directly use InstructionBus(3 downto 0)
+
+            ImmVal => ImmVal,
+            ImmMuxSel => ImmMuxSel,
+
+            JumpFlag => JumpFlag,
+            JumpAddr => JumpAddr
         );
 
+  
     REGBANK : register_bank
         port map (
-            D => DataBus, RegSel => RegSel, RegEn => RegEn,
-            Clk => Clk, Reset => Reset,
+            D => DataBus,
+            RegSel => RegSel,
+            RegEn => RegEn,
+            Clk => Clk,
+            Reset => Reset,
             R0 => R0, R1 => R1, R2 => R2, R3 => R3,
             R4 => R4, R5 => R5, R6 => R6, R7 => R7
         );
 
+   
     MUX_A : mux_8way_4bit
         port map (R0,R1,R2,R3,R4,R5,R6,R7, MuxA_Sel, MuxA_Out);
 
     MUX_B : mux_8way_4bit
         port map (R0,R1,R2,R3,R4,R5,R6,R7, MuxB_Sel, MuxB_Out);
 
-    ALU : add_sub_4bit
+
+    ALU : alu_4bit
         port map (
-            A => MuxA_Out, B => MuxB_Out, AddSub => AddSub,
-            Result => ALU_Result, Overflow => ALU_Overflow, Zero => ALU_Zero
+            A => MuxA_Out,
+            B => MuxB_Out,
+            ALUop => InstructionBus(3 downto 0),
+            Result => ALU_Result,
+            Overflow => ALU_Overflow,
+            Zero => ALU_Zero
         );
+
 
     IMM_MUX : mux_2way_4bit
         port map (A => ALU_Result, B => ImmVal, Sel => ImmMuxSel, Y => DataBus);
 
+    
     PC_INC : adder_3bit
         port map (A => PCCurrAddr, B => "001", Sum => PCPlusOne);
 
     PC_MUX : mux_2way_3bit
         port map (A => PCPlusOne, B => JumpAddr, Sel => JumpFlag, Y => PCNextAddr);
+
+
     SEG7 : sevenseg_rom
         port map (address => R7, data => seg_out);
 
