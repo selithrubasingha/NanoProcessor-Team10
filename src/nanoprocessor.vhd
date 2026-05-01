@@ -8,6 +8,7 @@ entity nanoprocessor is
         R7_Out   : out STD_LOGIC_VECTOR(3 downto 0);
         Overflow : out STD_LOGIC;
         ZeroFlag : out STD_LOGIC;
+        NegFlag  : out STD_LOGIC;
         SevenSeg : out std_logic_vector(6 downto 0);
         Anode    : out STD_LOGIC_VECTOR(3 downto 0)
     );
@@ -29,6 +30,7 @@ architecture Structural of nanoprocessor is
 
     signal ALU_Zero     : STD_LOGIC;
     signal ALU_Overflow : STD_LOGIC;
+    signal ALU_Negative : STD_LOGIC;
 
     signal RegSel    : STD_LOGIC_VECTOR(2 downto 0);
     signal RegEn     : STD_LOGIC;
@@ -191,7 +193,7 @@ begin
     ALU : add_sub_4bit
         port map (
             A => MuxA_Out, B => MuxB_Out, AddSub => AddSub,
-            Result => ALU_Result, Overflow => ALU_Overflow, Zero => ALU_Zero
+            Result => ALU_Result, Overflow => ALU_Overflow, Zero => ALU_Zero, Negative => ALU_Negative
         );
 
     IMM_MUX : mux_2way_4bit
@@ -208,6 +210,7 @@ begin
     R7_Out   <= R7;
     ZeroFlag <= ALU_Zero;
     Overflow <= ALU_Overflow;
+    NegFlag <= ALU_Negative;
     SevenSeg <= seg_out;
 
 end Structural;

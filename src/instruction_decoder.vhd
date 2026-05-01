@@ -5,6 +5,7 @@ entity instruction_decoder is
     Port (
         Instruction : in  STD_LOGIC_VECTOR(11 downto 0);
         Zero        : in  STD_LOGIC;
+        Negative    : in  STD_LOGIC;
         RegSel      : out STD_LOGIC_VECTOR(2 downto 0);
         RegEn       : out STD_LOGIC;
         MuxA_Sel    : out STD_LOGIC_VECTOR(2 downto 0);
