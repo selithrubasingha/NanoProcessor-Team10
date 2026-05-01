@@ -8,7 +8,8 @@ entity add_sub_4bit is
         AddSub   : in  STD_LOGIC;   -- '0' = Add,  '1' = Subtract
         Result   : out STD_LOGIC_VECTOR(3 downto 0);
         Overflow : out STD_LOGIC;
-        Zero     : out STD_LOGIC
+        Zero     : out STD_LOGIC;
+        Negative : out STD_LOGIC    -- ADD THIS LINE
     );
 end add_sub_4bit;
 
@@ -52,5 +53,6 @@ begin
     Result   <= Sum_s;
     Overflow <= Cout_s XOR C3_s;   -- signed overflow detection
     Zero     <= '1' when Sum_s = "0000" else '0';
+    Negative <= Sum_s(3);          -- ADD THIS LINE (Bit 3 is the sign bit)
 
 end Structural;
