@@ -1,4 +1,3 @@
-
 library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
 
@@ -15,10 +14,22 @@ end add_sub_4bit;
 
 architecture Structural of add_sub_4bit is
 
-    signal B_mod  : STD_LOGIC_VECTOR(3 downto 0);  -- B possibly inverted
+    signal B_mod  : STD_LOGIC_VECTOR(3 downto 0);  
     signal Sum_s  : STD_LOGIC_VECTOR(3 downto 0);
     signal Cout_s : STD_LOGIC;
     signal C3_s   : STD_LOGIC;
+
+    -- Component Declaration
+    component rca_4bit
+        Port (
+            A    : in  STD_LOGIC_VECTOR(3 downto 0);
+            B    : in  STD_LOGIC_VECTOR(3 downto 0);
+            Cin  : in  STD_LOGIC;
+            Sum  : out STD_LOGIC_VECTOR(3 downto 0);
+            Cout : out STD_LOGIC;
+            C3   : out STD_LOGIC
+        );
+    end component;
 
 begin
     -- Conditionally invert B bit-by-bit
@@ -27,10 +38,8 @@ begin
     B_mod(2) <= B(2) XOR AddSub;
     B_mod(3) <= B(3) XOR AddSub;
 
-    -- Instantiate the 4-bit RCA
-    -- Cin = AddSub: when subtracting, Cin=1 completes two's-complement negation
-
-    RCA : entity work.rca_4bit
+    -- Component Instantiation
+    RCA : rca_4bit
         port map (
             A    => A,
             B    => B_mod,
