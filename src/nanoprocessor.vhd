@@ -1,4 +1,3 @@
-
 library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
 
@@ -6,39 +5,30 @@ entity nanoprocessor is
     Port (
         Clk      : in  STD_LOGIC;
         Reset    : in  STD_LOGIC;
-        -- Result output (R7) wired to LD0-LD3
         R7_Out   : out STD_LOGIC_VECTOR(3 downto 0);
-        -- Status flags wired to LD14 and LD15
         Overflow : out STD_LOGIC;
-        ZeroFlag : out STD_LOGIC
+        ZeroFlag : out STD_LOGIC;
+        SevenSeg : out std_logic_vector(6 downto 0);
     );
 end nanoprocessor;
 
 architecture Structural of nanoprocessor is
 
-   
-
-    -- Instruction Bus: ROM -> Decoder
     signal InstructionBus : STD_LOGIC_VECTOR(11 downto 0);
 
-    -- Program Counter signals
-    signal PCCurrAddr : STD_LOGIC_VECTOR(2 downto 0);  -- PC output
-    signal PCNextAddr : STD_LOGIC_VECTOR(2 downto 0);  -- PC input (from 2-way 3-bit mux)
-    signal PCPlusOne  : STD_LOGIC_VECTOR(2 downto 0);  -- 3-bit adder output
+    signal PCCurrAddr : STD_LOGIC_VECTOR(2 downto 0);
+    signal PCNextAddr : STD_LOGIC_VECTOR(2 downto 0);
+    signal PCPlusOne  : STD_LOGIC_VECTOR(2 downto 0);
 
-    -- ALU operand signals
-    signal MuxA_Out   : STD_LOGIC_VECTOR(3 downto 0);  -- 8-way mux A output
-    signal MuxB_Out   : STD_LOGIC_VECTOR(3 downto 0);  -- 8-way mux B output
-    signal ALU_Result : STD_LOGIC_VECTOR(3 downto 0);  -- add_sub_4bit result
+    signal MuxA_Out   : STD_LOGIC_VECTOR(3 downto 0);
+    signal MuxB_Out   : STD_LOGIC_VECTOR(3 downto 0);
+    signal ALU_Result : STD_LOGIC_VECTOR(3 downto 0);
 
-    -- Data Bus: 2-way 4-bit mux output -> Register Bank D input
     signal DataBus    : STD_LOGIC_VECTOR(3 downto 0);
 
-    -- ALU flag signals
     signal ALU_Zero     : STD_LOGIC;
     signal ALU_Overflow : STD_LOGIC;
 
-    -- Control signals from Instruction Decoder
     signal RegSel    : STD_LOGIC_VECTOR(2 downto 0);
     signal RegEn     : STD_LOGIC;
     signal MuxA_Sel  : STD_LOGIC_VECTOR(2 downto 0);
@@ -49,7 +39,6 @@ architecture Structural of nanoprocessor is
     signal JumpFlag  : STD_LOGIC;
     signal JumpAddr  : STD_LOGIC_VECTOR(2 downto 0);
 
-    -- Register Bank outputs (all registers always readable)
     signal R0 : STD_LOGIC_VECTOR(3 downto 0);
     signal R1 : STD_LOGIC_VECTOR(3 downto 0);
     signal R2 : STD_LOGIC_VECTOR(3 downto 0);
@@ -59,131 +48,165 @@ architecture Structural of nanoprocessor is
     signal R6 : STD_LOGIC_VECTOR(3 downto 0);
     signal R7 : STD_LOGIC_VECTOR(3 downto 0);
 
+    signal seg_out : std_logic_vector(6 downto 0);
+
+    ------------------------------------------------------------------
+    -- COMPONENT DECLARATIONS
+    ------------------------------------------------------------------
+
+    component program_counter
+        Port (
+            NextAddr : in  STD_LOGIC_VECTOR(2 downto 0);
+            Clk      : in  STD_LOGIC;
+            Reset    : in  STD_LOGIC;
+            CurrAddr : out STD_LOGIC_VECTOR(2 downto 0)
+        );
+    end component;
+
+    component program_rom
+        Port (
+            Addr        : in  STD_LOGIC_VECTOR(2 downto 0);
+            Instruction : out STD_LOGIC_VECTOR(11 downto 0)
+        );
+    end component;
+
+    component instruction_decoder
+        Port (
+            Instruction : in  STD_LOGIC_VECTOR(11 downto 0);
+            Zero        : in  STD_LOGIC;
+            RegSel      : out STD_LOGIC_VECTOR(2 downto 0);
+            RegEn       : out STD_LOGIC;
+            MuxA_Sel    : out STD_LOGIC_VECTOR(2 downto 0);
+            MuxB_Sel    : out STD_LOGIC_VECTOR(2 downto 0);
+            AddSub      : out STD_LOGIC;
+            ImmVal      : out STD_LOGIC_VECTOR(3 downto 0);
+            ImmMuxSel   : out STD_LOGIC;
+            JumpFlag    : out STD_LOGIC;
+            JumpAddr    : out STD_LOGIC_VECTOR(2 downto 0)
+        );
+    end component;
+
+    component register_bank
+        Port (
+            D      : in  STD_LOGIC_VECTOR(3 downto 0);
+            RegSel : in  STD_LOGIC_VECTOR(2 downto 0);
+            RegEn  : in  STD_LOGIC;
+            Clk    : in  STD_LOGIC;
+            Reset  : in  STD_LOGIC;
+            R0     : out STD_LOGIC_VECTOR(3 downto 0);
+            R1     : out STD_LOGIC_VECTOR(3 downto 0);
+            R2     : out STD_LOGIC_VECTOR(3 downto 0);
+            R3     : out STD_LOGIC_VECTOR(3 downto 0);
+            R4     : out STD_LOGIC_VECTOR(3 downto 0);
+            R5     : out STD_LOGIC_VECTOR(3 downto 0);
+            R6     : out STD_LOGIC_VECTOR(3 downto 0);
+            R7     : out STD_LOGIC_VECTOR(3 downto 0)
+        );
+    end component;
+
+    component mux_8way_4bit
+        Port (
+            I0,I1,I2,I3,I4,I5,I6,I7 : in STD_LOGIC_VECTOR(3 downto 0);
+            Sel : in STD_LOGIC_VECTOR(2 downto 0);
+            Y   : out STD_LOGIC_VECTOR(3 downto 0)
+        );
+    end component;
+
+    component add_sub_4bit
+        Port (
+            A        : in  STD_LOGIC_VECTOR(3 downto 0);
+            B        : in  STD_LOGIC_VECTOR(3 downto 0);
+            AddSub   : in  STD_LOGIC;
+            Result   : out STD_LOGIC_VECTOR(3 downto 0);
+            Overflow : out STD_LOGIC;
+            Zero     : out STD_LOGIC
+        );
+    end component;
+
+    component mux_2way_4bit
+        Port (
+            A   : in  STD_LOGIC_VECTOR(3 downto 0);
+            B   : in  STD_LOGIC_VECTOR(3 downto 0);
+            Sel : in  STD_LOGIC;
+            Y   : out STD_LOGIC_VECTOR(3 downto 0)
+        );
+    end component;
+
+    component adder_3bit
+        Port (
+            A   : in  STD_LOGIC_VECTOR(2 downto 0);
+            B   : in  STD_LOGIC_VECTOR(2 downto 0);
+            Sum : out STD_LOGIC_VECTOR(2 downto 0)
+        );
+    end component;
+
+    component mux_2way_3bit
+        Port (
+            A   : in  STD_LOGIC_VECTOR(2 downto 0);
+            B   : in  STD_LOGIC_VECTOR(2 downto 0);
+            Sel : in  STD_LOGIC;
+            Y   : out STD_LOGIC_VECTOR(2 downto 0)
+        );
+    end component;
+        
+    component sevenseg_rom
+    port (
+        address : in  std_logic_vector(3 downto 0);
+        data    : out std_logic_vector(6 downto 0)
+    );
+end component;
+        
 begin
 
-    
-    PC : entity work.program_counter
+    PC : program_counter
+        port map (NextAddr => PCNextAddr, Clk => Clk, Reset => Reset, CurrAddr => PCCurrAddr);
+
+    ROM : program_rom
+        port map (Addr => PCCurrAddr, Instruction => InstructionBus);
+
+    DECODER : instruction_decoder
         port map (
-            NextAddr => PCNextAddr,
-            Clk      => Clk,
-            Reset    => Reset,
-            CurrAddr => PCCurrAddr
+            Instruction => InstructionBus, Zero => ALU_Zero,
+            RegSel => RegSel, RegEn => RegEn,
+            MuxA_Sel => MuxA_Sel, MuxB_Sel => MuxB_Sel,
+            AddSub => AddSub, ImmVal => ImmVal,
+            ImmMuxSel => ImmMuxSel, JumpFlag => JumpFlag, JumpAddr => JumpAddr
         );
 
-  
-    ROM : entity work.program_rom
+    REGBANK : register_bank
         port map (
-            Addr        => PCCurrAddr,
-            Instruction => InstructionBus
+            D => DataBus, RegSel => RegSel, RegEn => RegEn,
+            Clk => Clk, Reset => Reset,
+            R0 => R0, R1 => R1, R2 => R2, R3 => R3,
+            R4 => R4, R5 => R5, R6 => R6, R7 => R7
         );
 
-   
-   
-    DECODER : entity work.instruction_decoder
+    MUX_A : mux_8way_4bit
+        port map (R0,R1,R2,R3,R4,R5,R6,R7, MuxA_Sel, MuxA_Out);
+
+    MUX_B : mux_8way_4bit
+        port map (R0,R1,R2,R3,R4,R5,R6,R7, MuxB_Sel, MuxB_Out);
+
+    ALU : add_sub_4bit
         port map (
-            Instruction => InstructionBus,
-            Zero        => ALU_Zero,
-            RegSel      => RegSel,
-            RegEn       => RegEn,
-            MuxA_Sel    => MuxA_Sel,
-            MuxB_Sel    => MuxB_Sel,
-            AddSub      => AddSub,
-            ImmVal      => ImmVal,
-            ImmMuxSel   => ImmMuxSel,
-            JumpFlag    => JumpFlag,
-            JumpAddr    => JumpAddr
+            A => MuxA_Out, B => MuxB_Out, AddSub => AddSub,
+            Result => ALU_Result, Overflow => ALU_Overflow, Zero => ALU_Zero
         );
 
-   
-   
-    REGBANK : entity work.register_bank
-        port map (
-            D      => DataBus,
-            RegSel => RegSel,
-            RegEn  => RegEn,
-            Clk    => Clk,
-            Reset  => Reset,
-            R0     => R0,
-            R1     => R1,
-            R2     => R2,
-            R3     => R3,
-            R4     => R4,
-            R5     => R5,
-            R6     => R6,
-            R7     => R7
-        );
+    IMM_MUX : mux_2way_4bit
+        port map (A => ALU_Result, B => ImmVal, Sel => ImmMuxSel, Y => DataBus);
 
-   
-    MUX_A : entity work.mux_8way_4bit
-        port map (
-            I0  => R0,
-            I1  => R1,
-            I2  => R2,
-            I3  => R3,
-            I4  => R4,
-            I5  => R5,
-            I6  => R6,
-            I7  => R7,
-            Sel => MuxA_Sel,
-            Y   => MuxA_Out
-        );
+    PC_INC : adder_3bit
+        port map (A => PCCurrAddr, B => "001", Sum => PCPlusOne);
 
-   
-    MUX_B : entity work.mux_8way_4bit
-        port map (
-            I0  => R0,
-            I1  => R1,
-            I2  => R2,
-            I3  => R3,
-            I4  => R4,
-            I5  => R5,
-            I6  => R6,
-            I7  => R7,
-            Sel => MuxB_Sel,
-            Y   => MuxB_Out
-        );
+    PC_MUX : mux_2way_3bit
+        port map (A => PCPlusOne, B => JumpAddr, Sel => JumpFlag, Y => PCNextAddr);
+    SEG7 : sevenseg_rom
+        port map (address => R7, data => seg_out);
 
-   
-    ALU : entity work.add_sub_4bit
-        port map (
-            A        => MuxA_Out,
-            B        => MuxB_Out,
-            AddSub   => AddSub,
-            Result   => ALU_Result,
-            Overflow => ALU_Overflow,
-            Zero     => ALU_Zero
-        );
-
-    
-    IMM_MUX : entity work.mux_2way_4bit
-        port map (
-            A   => ALU_Result,
-            B   => ImmVal,
-            Sel => ImmMuxSel,
-            Y   => DataBus
-        );
-
-   
-    PC_INC : entity work.adder_3bit
-        port map (
-            A   => PCCurrAddr,
-            B   => "001",
-            Sum => PCPlusOne
-        );
-
-    
-   
-    PC_MUX : entity work.mux_2way_3bit
-        port map (
-            A   => PCPlusOne,
-            B   => JumpAddr,
-            Sel => JumpFlag,
-            Y   => PCNextAddr
-        );
-
-    
     R7_Out   <= R7;
     ZeroFlag <= ALU_Zero;
     Overflow <= ALU_Overflow;
+    SevenSeg <= seg_out;
 
 end Structural;
