@@ -32,7 +32,7 @@ begin
             when "101" => Instruction <= "001110010000";
 
             -- Line 6: JZR R0, 6  -> R0=0, always jump to address 6 (halt)
-            when "110" => Instruction <= "110000000110";
+            when "110" => Instruction <= "111110000110";
 
             -- Line 7: Safety padding
             when "111" => Instruction <= "110000000110";
