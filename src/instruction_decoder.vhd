@@ -26,70 +26,47 @@ end instruction_decoder;
 
 architecture Behavioral of instruction_decoder is
 
-    signal opcode : STD_LOGIC_VECTOR(1 downto 0);
-    signal isALU  : STD_LOGIC;
-    signal isNEG  : STD_LOGIC;
-    signal isMOVI : STD_LOGIC;
-    signal isJZR  : STD_LOGIC;
+    signal I11, I10 : STD_LOGIC;
+    signal nI11, nI10 : STD_LOGIC;
+
+    signal isALU, isNEG, isMOVI, isJZR : STD_LOGIC;
 
 begin
+    I11 <= Instruction(11);
+    I10 <= Instruction(10);
 
-    opcode <= Instruction(11 downto 10);
+    nI11 <= NOT I11;
+    nI10 <= NOT I10;
 
-    isALU  <= '1' when opcode = "00" else '0';
-    isNEG  <= '1' when opcode = "01" else '0';
-    isMOVI <= '1' when opcode = "10" else '0';
-    isJZR  <= '1' when opcode = "11" else '0';
+    isALU  <= nI11 AND nI10;   -- 00
+    isNEG  <= nI11 AND I10;    -- 01
+    isMOVI <= I11 AND nI10;    -- 10
+    isJZR  <= I11 AND I10;     -- 11
 
-    -- Destination / source register field [9:7]
-    RegSel <= Instruction(9 downto 7);
+    RegSel   <= Instruction(9 downto 7);
+    ImmVal   <= Instruction(3 downto 0);
+    JumpAddr <= Instruction(2 downto 0);
 
-    -- Write enable: ALU, NEG, and MOVI all write back; JZR does not
-    RegEn <= '1' when (isALU = '1' or isNEG = '1' or isMOVI = '1')
-             else '0';
+    RegEn <= isALU OR isNEG OR isMOVI;
 
-    -- ALU input A:
-    --   ALU  -> Ra (bits[9:7])
-    --   NEG  -> R0 (hardwired 0) so result = 0 - R = -R
-    --   JZR  -> R0 so ALU computes 0 - R to produce the Zero flag
-    --   MOVI -> don't-care ("000")
-    MuxA_Sel <= Instruction(9 downto 7) when isALU = '1'
-                else "000";
+    MuxA_Sel(0) <= Instruction(7) AND isALU;
+    MuxA_Sel(1) <= Instruction(8) AND isALU;
+    MuxA_Sel(2) <= Instruction(9) AND isALU;
 
-    -- ALU input B:
-    --   ALU  -> Rb (bits[6:4])
-    --   NEG  -> R  (bits[9:7])
-    --   JZR  -> R  (bits[9:7])
-    --   MOVI -> don't-care ("000")
-    MuxB_Sel <= Instruction(6 downto 4) when isALU = '1' else
-                Instruction(9 downto 7) when isNEG = '1' else
-                Instruction(9 downto 7) when isJZR = '1' else
-                "000";
+    MuxB_Sel(0) <= (Instruction(4) AND isALU) OR (Instruction(7) AND (isNEG OR isJZR));
+    MuxB_Sel(1) <= (Instruction(5) AND isALU) OR (Instruction(8) AND (isNEG OR isJZR));
+    MuxB_Sel(2) <= (Instruction(6) AND isALU) OR (Instruction(9) AND (isNEG OR isJZR));
 
-    -- ALU operation:
-    --   ALU  -> encoded in instruction bits[3:0]
-    --  0000=ADD  0001=SUB  0010=AND  0011=OR  0100=XOR
-    --   NEG  -> 0001 (SUB) to compute 0 - R
-    --   others -> 0000 (result unused for MOVI/JZR)
-    ALUop <= Instruction(3 downto 0) when isALU = '1' else
-             "0001"                  when isNEG = '1' else
-             "0000";
+    ALUop(0) <= (Instruction(0) AND isALU) OR isNEG;
+    ALUop(1) <= Instruction(1) AND isALU;
+    ALUop(2) <= Instruction(2) AND isALU;
+    ALUop(3) <= Instruction(3) AND isALU;
 
-    -- MOVI immediate
-    ImmVal    <= Instruction(3 downto 0);
     ImmMuxSel <= isMOVI;
 
-    -- Jump control
--- Jump control (Bit 3 = '0' for JZR, Bit 3 = '1' for JNEG)
-
-    JumpFlag <= isJZR AND ( (Zero AND NOT Instruction(3)) OR (Negative AND Instruction(3)) );
-
-    -- Mux A selection
-
-    MuxA_Sel <= Instruction(9 downto 7);
-
-    -- Mux B selection
-
-    MuxB_Sel <= Instruction(6 downto 4);
+    JumpFlag <= isJZR AND (
+                    (Zero AND (NOT Instruction(3))) OR
+                    (Negative AND Instruction(3))
+                 );
 
 end Behavioral;
