@@ -11,6 +11,8 @@ end adder_3bit;
  
 architecture Structural of adder_3bit is
  
+    signal A_4bit   : STD_LOGIC_VECTOR(3 downto 0);
+    signal B_4bit   : STD_LOGIC_VECTOR(3 downto 0);
     signal Sum_4bit : STD_LOGIC_VECTOR(3 downto 0);
 
     component rca_4bit
@@ -26,11 +28,15 @@ architecture Structural of adder_3bit is
  
 begin
 
-   
+
+    A_4bit <= '0' & A;
+    B_4bit <= '0' & B;
+
+  
     RCA : rca_4bit
         port map (
-            A    => '0' & A,     
-            B    => '0' & B,   
+            A    => A_4bit,      
+            B    => B_4bit,   
             Cin  => '0',
             Sum  => Sum_4bit,
             Cout => open,
