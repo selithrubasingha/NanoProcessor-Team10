@@ -28,7 +28,7 @@ architecture behavioral of sevenseg_rom is
         "1000110", --c
         "0100001", --d
         "0000110", --e
-        "0001110" --f
+        "0001110", --f
         "0111111", --Minus Sign (Index 16)
         "1111111"  --Blank (Index 17)
     );
