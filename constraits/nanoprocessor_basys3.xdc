@@ -48,3 +48,42 @@ set_property IOSTANDARD LVCMOS33 [get_ports ZeroFlag]
 ## -- Overflow flag -> LD15
 set_property PACKAGE_PIN L1 [get_ports Overflow]
 set_property IOSTANDARD LVCMOS33 [get_ports Overflow]
+
+## -- NEW: Negative flag -> LD13
+set_property PACKAGE_PIN N3 [get_ports NegFlag]
+set_property IOSTANDARD LVCMOS33 [get_ports NegFlag]
+
+## -- NEW: 7 Segment Display (Segments A to G)
+set_property PACKAGE_PIN W7 [get_ports {SevenSeg[0]}]
+set_property IOSTANDARD LVCMOS33 [get_ports {SevenSeg[0]}]
+
+set_property PACKAGE_PIN W6 [get_ports {SevenSeg[1]}]
+set_property IOSTANDARD LVCMOS33 [get_ports {SevenSeg[1]}]
+
+set_property PACKAGE_PIN U8 [get_ports {SevenSeg[2]}]
+set_property IOSTANDARD LVCMOS33 [get_ports {SevenSeg[2]}]
+
+set_property PACKAGE_PIN V8 [get_ports {SevenSeg[3]}]
+set_property IOSTANDARD LVCMOS33 [get_ports {SevenSeg[3]}]
+
+set_property PACKAGE_PIN U5 [get_ports {SevenSeg[4]}]
+set_property IOSTANDARD LVCMOS33 [get_ports {SevenSeg[4]}]
+
+set_property PACKAGE_PIN V5 [get_ports {SevenSeg[5]}]
+set_property IOSTANDARD LVCMOS33 [get_ports {SevenSeg[5]}]
+
+set_property PACKAGE_PIN U7 [get_ports {SevenSeg[6]}]
+set_property IOSTANDARD LVCMOS33 [get_ports {SevenSeg[6]}]
+
+## -- NEW: 7 Segment Display (Anodes AN0 to AN3)
+set_property PACKAGE_PIN U2 [get_ports {Anode[0]}]
+set_property IOSTANDARD LVCMOS33 [get_ports {Anode[0]}]
+
+set_property PACKAGE_PIN U4 [get_ports {Anode[1]}]
+set_property IOSTANDARD LVCMOS33 [get_ports {Anode[1]}]
+
+set_property PACKAGE_PIN V4 [get_ports {Anode[2]}]
+set_property IOSTANDARD LVCMOS33 [get_ports {Anode[2]}]
+
+set_property PACKAGE_PIN W4 [get_ports {Anode[3]}]
+set_property IOSTANDARD LVCMOS33 [get_ports {Anode[3]}]
