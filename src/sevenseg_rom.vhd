@@ -10,7 +10,7 @@ end sevenseg_rom;
 
 architecture behavioral of sevenseg_rom is
 
-    type seg7_t is array (0 to 15) of std_logic_vector(6 downto 0);
+    type seg7_t is array (0 to 17) of std_logic_vector(6 downto 0);
 
     signal sevenseg_rom : seg7_t := (
         "1000000", --0
@@ -29,6 +29,8 @@ architecture behavioral of sevenseg_rom is
         "0100001", --d
         "0000110", --e
         "0001110" --f
+        "0111111", --Minus Sign (Index 16)
+        "1111111"  --Blank (Index 17)
     );
 
 begin
