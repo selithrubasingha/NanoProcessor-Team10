@@ -63,11 +63,12 @@ begin
     JumpFlag <= isJZR AND ( (Zero AND NOT Instruction(3)) OR (Negative AND Instruction(3)) );
 
     -- Mux A selection
-
-    MuxA_Sel <= Instruction(9 downto 7);
+    -- If NEG, force MuxA to R0 (0). Otherwise, use RegSel (Dest).
+    MuxA_Sel <= "000" when isNEG = '1' else Instruction(9 downto 7);
 
     -- Mux B selection
-
-    MuxB_Sel <= Instruction(6 downto 4);
+    -- If NEG, force MuxB to the register we want to negate (RegSel). 
+    -- Otherwise, use the standard Source field (Instruction 6 downto 4).
+    MuxB_Sel <= Instruction(9 downto 7) when isNEG = '1' else Instruction(6 downto 4);
 
 end Behavioral;
