@@ -104,7 +104,8 @@ architecture Structural of nanoprocessor is
             AddSub   : in  STD_LOGIC;
             Result   : out STD_LOGIC_VECTOR(3 downto 0);
             Overflow : out STD_LOGIC;
-            Zero     : out STD_LOGIC
+            Zero     : out STD_LOGIC;
+            Negative : out STD_LOGIC
         );
     end component;
 
@@ -258,7 +259,8 @@ begin
             AddSub   => AddSub,
             Result   => ALU_Result, 
             Overflow => ALU_Overflow, 
-            Zero     => ALU_Zero
+            Zero     => ALU_Zero,
+            Negative => ALU_Negative
         );
 
     IMM_MUX : mux_2way_4bit
