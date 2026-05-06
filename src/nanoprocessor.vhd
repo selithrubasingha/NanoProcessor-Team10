@@ -8,7 +8,9 @@ entity nanoprocessor is
         R7_Out   : out STD_LOGIC_VECTOR(3 downto 0);
         Overflow : out STD_LOGIC;
         ZeroFlag : out STD_LOGIC;
-        SevenSeg : out std_logic_vector(6 downto 0) -- Fixed trailing semicolon here
+        NegFlag  : out STD_LOGIC;
+        SevenSeg : out std_logic_vector(6 downto 0); 
+        Anode    : out STD_LOGIC_VECTOR(3 downto 0)
     );
 end nanoprocessor;
 
@@ -22,6 +24,17 @@ architecture Structural of nanoprocessor is
         Port (
             Clk_in  : in STD_LOGIC;
             Clk_out : out STD_LOGIC
+        );
+    end component;
+
+    -- NEW COMPONENT: Signed 7-Segment Controller
+    component Signed_7Seg_Controller
+        Port (
+            Clk         : in  STD_LOGIC; -- Needs FAST clock
+            Reset       : in  STD_LOGIC;
+            Reg_Data    : in  STD_LOGIC_VECTOR (3 downto 0);
+            SevenSeg    : out STD_LOGIC_VECTOR (6 downto 0);
+            Anode       : out STD_LOGIC_VECTOR (3 downto 0)
         );
     end component;
 
@@ -47,6 +60,7 @@ architecture Structural of nanoprocessor is
             Zero        : in  STD_LOGIC;
             RegSel      : out STD_LOGIC_VECTOR(2 downto 0);
             RegEn       : out STD_LOGIC;
+            Negative    : in  STD_LOGIC;
             MuxA_Sel    : out STD_LOGIC_VECTOR(2 downto 0);
             MuxB_Sel    : out STD_LOGIC_VECTOR(2 downto 0);
             AddSub      : out STD_LOGIC;
@@ -120,12 +134,12 @@ architecture Structural of nanoprocessor is
         );
     end component;
         
-    component sevenseg_rom
-        Port (
-            address : in  std_logic_vector(3 downto 0);
-            data    : out std_logic_vector(6 downto 0)
-        );
-    end component;
+    -- component sevenseg_rom
+    --     Port (
+    --         address : in  std_logic_vector(3 downto 0);
+    --         data    : out std_logic_vector(6 downto 0)
+    --     );
+    -- end component;
 
     ------------------------------------------------------------------
     -- INTERNAL SIGNALS
@@ -146,6 +160,7 @@ architecture Structural of nanoprocessor is
 
     signal ALU_Zero       : STD_LOGIC;
     signal ALU_Overflow   : STD_LOGIC;
+    signal ALU_Negative : STD_LOGIC;
 
     signal RegSel         : STD_LOGIC_VECTOR(2 downto 0);
     signal RegEn          : STD_LOGIC;
@@ -171,6 +186,16 @@ begin
             Clk_out => clk_slow   -- The 1 Hz slowed down clock
         );
 
+    -- NEW: Display Controller on the FAST clock
+    DISPLAY_CTRL : Signed_7Seg_Controller
+        port map (
+            Clk      => Clk,      -- RAW 100 MHz here for multiplexing
+            Reset    => Reset,
+            Reg_Data => R7,
+            SevenSeg => SevenSeg,
+            Anode    => Anode
+        );
+
     PC : program_counter
         port map (
             NextAddr => PCNextAddr, 
@@ -191,6 +216,7 @@ begin
             Zero        => ALU_Zero,
             RegSel      => RegSel, 
             RegEn       => RegEn,
+            Negative    => ALU_Negative,
             MuxA_Sel    => MuxA_Sel, 
             MuxB_Sel    => MuxB_Sel,
             AddSub      => AddSub, 
@@ -271,6 +297,7 @@ begin
     R7_Out   <= R7;
     ZeroFlag <= ALU_Zero;
     Overflow <= ALU_Overflow;
-    SevenSeg <= seg_out;
+    NegFlag <= ALU_Negative;
+
 
 end Structural;
