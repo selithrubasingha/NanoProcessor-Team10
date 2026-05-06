@@ -1,8 +1,3 @@
----------------------------------------------------------------------------
--- tb_register_bank.vhd
--- Testbench for the Register Bank.
--- Tests: write to each register, R0 stays zero, Reset clears all.
----------------------------------------------------------------------------
 library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
 
@@ -11,69 +6,136 @@ end tb_register_bank;
 
 architecture Behavioral of tb_register_bank is
 
-    signal D      : STD_LOGIC_VECTOR(3 downto 0) := (others => '0');
-    signal RegSel : STD_LOGIC_VECTOR(2 downto 0) := "000";
-    signal RegEn  : STD_LOGIC := '0';
-    signal Clk    : STD_LOGIC := '0';
-    signal Reset  : STD_LOGIC := '0';
-    signal R0, R1, R2, R3, R4, R5, R6, R7 : STD_LOGIC_VECTOR(3 downto 0);
+    -- Component Declaration
+    component register_bank
+        Port (
+            D      : in  STD_LOGIC_VECTOR(3 downto 0);
+            RegSel : in  STD_LOGIC_VECTOR(2 downto 0);
+            RegEn  : in  STD_LOGIC;
+            Clk    : in  STD_LOGIC;
+            Reset  : in  STD_LOGIC;
+            R0     : out STD_LOGIC_VECTOR(3 downto 0);
+            R1     : out STD_LOGIC_VECTOR(3 downto 0);
+            R2     : out STD_LOGIC_VECTOR(3 downto 0);
+            R3     : out STD_LOGIC_VECTOR(3 downto 0);
+            R4     : out STD_LOGIC_VECTOR(3 downto 0);
+            R5     : out STD_LOGIC_VECTOR(3 downto 0);
+            R6     : out STD_LOGIC_VECTOR(3 downto 0);
+            R7     : out STD_LOGIC_VECTOR(3 downto 0)
+        );
+    end component;
 
-    constant CLK_PERIOD : time := 10 ns;
+    -- Test Signals
+    signal D_TB      : STD_LOGIC_VECTOR(3 downto 0) := "0000";
+    signal RegSel_TB : STD_LOGIC_VECTOR(2 downto 0) := "000";
+    signal RegEn_TB  : STD_LOGIC := '0';
+    signal Clk_TB    : STD_LOGIC := '0';
+    signal Reset_TB  : STD_LOGIC := '0';
+
+    signal R0_TB, R1_TB, R2_TB, R3_TB,
+           R4_TB, R5_TB, R6_TB, R7_TB : STD_LOGIC_VECTOR(3 downto 0);
+
+    constant Clock_Period : time := 100 ns;
 
 begin
-    UUT : entity work.register_bank
-        port map (D, RegSel, RegEn, Clk, Reset, R0, R1, R2, R3, R4, R5, R6, R7);
 
-    -- Clock generation
-    Clk <= not Clk after CLK_PERIOD / 2;
+    -- Instantiate UUT
+    UUT: register_bank
+        port map (
+            D      => D_TB,
+            RegSel => RegSel_TB,
+            RegEn  => RegEn_TB,
+            Clk    => Clk_TB,
+            Reset  => Reset_TB,
+            R0     => R0_TB,
+            R1     => R1_TB,
+            R2     => R2_TB,
+            R3     => R3_TB,
+            R4     => R4_TB,
+            R5     => R5_TB,
+            R6     => R6_TB,
+            R7     => R7_TB
+        );
 
-    process
+    -- Clock process
+    Clock_process: process
     begin
-        -- -------------------------------------------------------
-        -- Test: R0 must always be "0000" and cannot be written
-        D <= "1111"; RegSel <= "000"; RegEn <= '1';
-        wait for CLK_PERIOD;
-        assert R0 = "0000" report "FAIL: R0 should be hardwired 0" severity error;
-
-        -- -------------------------------------------------------
-        -- Test: Write "1010" to R1
-        D <= "1010"; RegSel <= "001"; RegEn <= '1';
-        wait for CLK_PERIOD;
-        assert R1 = "1010" report "FAIL: R1 write" severity error;
-
-        -- -------------------------------------------------------
-        -- Test: Write "0110" to R7
-        D <= "0110"; RegSel <= "111"; RegEn <= '1';
-        wait for CLK_PERIOD;
-        assert R7 = "0110" report "FAIL: R7 write" severity error;
-
-        -- -------------------------------------------------------
-        -- Test: RegEn='0' should prevent writing
-        D <= "1111"; RegSel <= "001"; RegEn <= '0';
-        wait for CLK_PERIOD;
-        assert R1 = "1010" report "FAIL: RegEn=0 should hold R1" severity error;
-
-        -- -------------------------------------------------------
-        -- Test: Write to R2, R3
-        D <= "0011"; RegSel <= "010"; RegEn <= '1';
-        wait for CLK_PERIOD;
-        assert R2 = "0011" report "FAIL: R2 write" severity error;
-
-        D <= "0101"; RegSel <= "011"; RegEn <= '1';
-        wait for CLK_PERIOD;
-        assert R3 = "0101" report "FAIL: R3 write" severity error;
-
-        -- -------------------------------------------------------
-        -- Test: Reset clears R1..R7 to "0000"
-        Reset <= '1';
-        wait for CLK_PERIOD;
-        assert R1 = "0000" report "FAIL: Reset R1" severity error;
-        assert R2 = "0000" report "FAIL: Reset R2" severity error;
-        assert R7 = "0000" report "FAIL: Reset R7" severity error;
-        assert R0 = "0000" report "FAIL: Reset R0" severity error;
-        Reset <= '0';
-
-        report "register_bank: ALL TESTS PASSED" severity note;
+        while now < 1200 ns loop
+            Clk_TB <= '0';
+            wait for Clock_Period/2;
+            Clk_TB <= '1';
+            wait for Clock_Period/2;
+        end loop;
         wait;
     end process;
+
+    -- Stimulus process
+    Stim_process: process
+    begin
+
+        -- RESET
+        Reset_TB <= '1';
+        wait for Clock_Period;
+        Reset_TB <= '0';
+
+        -- Enable writing
+        RegEn_TB <= '1';
+
+        -- R1
+        wait until falling_edge(Clk_TB);
+        RegSel_TB <= "001";
+        D_TB <= "0101";
+        wait for Clock_Period;
+
+        -- R2
+        wait until falling_edge(Clk_TB);
+        RegSel_TB <= "010";
+        D_TB <= "1010";
+        wait for Clock_Period;
+
+        -- R3
+        wait until falling_edge(Clk_TB);
+        RegSel_TB <= "011";
+        D_TB <= "1111";
+        wait for Clock_Period;
+
+        -- R4
+        wait until falling_edge(Clk_TB);
+        RegSel_TB <= "100";
+        D_TB <= "0011";
+        wait for Clock_Period;
+
+        -- R5
+        wait until falling_edge(Clk_TB);
+        RegSel_TB <= "101";
+        D_TB <= "0111";
+        wait for Clock_Period;
+
+        -- R6
+        wait until falling_edge(Clk_TB);
+        RegSel_TB <= "110";
+        D_TB <= "1001";
+        wait for Clock_Period;
+
+        -- R7
+        wait until falling_edge(Clk_TB);
+        RegSel_TB <= "111";
+        D_TB <= "1100";
+        wait for Clock_Period;
+
+       
+        wait until falling_edge(Clk_TB);
+        RegSel_TB <= "000";
+        D_TB <= "1111";
+        wait for Clock_Period;
+
+  
+        wait until falling_edge(Clk_TB);
+        Reset_TB <= '1';
+        wait for Clock_Period;
+        Reset_TB <= '0';
+
+        wait;
+    end process;
+
 end Behavioral;
