@@ -54,5 +54,6 @@ begin
     Overflow <= Cout_s XOR C3_s;   -- signed overflow detection
     Negative <= Sum_s(3);
     Zero     <= '1' when Sum_s = "0000" else '0';
+    Negative <= Sum_s(3);          -- ADD THIS LINE (Bit 3 is the sign bit)
 
 end Structural;

@@ -19,24 +19,55 @@ entity instruction_decoder is
 end instruction_decoder;
 
 architecture Behavioral of instruction_decoder is
-    signal isADD : STD_LOGIC;
+
+    signal isALU  : STD_LOGIC;
+    signal isNEG  : STD_LOGIC;
+    signal isMOVI : STD_LOGIC;
+    signal isJZR  : STD_LOGIC;
 
 begin
+
+    -- Basic field extraction
+
     RegSel   <= Instruction(9 downto 7);
-    AddSub   <= Instruction(10);
     ImmVal   <= Instruction(3 downto 0);
     JumpAddr <= Instruction(2 downto 0);
 
-    isADD <= NOT Instruction(11) AND NOT Instruction(10);
 
-    RegEn     <= NOT (Instruction(11) AND Instruction(10));
-    ImmMuxSel <= Instruction(11) AND NOT Instruction(10);
-    JumpFlag  <= Zero AND Instruction(11) AND Instruction(10);
+    -- Opcode decoding
 
-    MuxA_Sel <= Instruction(9 downto 7) when isADD = '1' else "000";
+    isALU  <= NOT Instruction(11) AND NOT Instruction(10); -- 00
+    isNEG  <= NOT Instruction(11) AND Instruction(10);     -- 01
+    isMOVI <= Instruction(11) AND NOT Instruction(10);     -- 10
+    isJZR  <= Instruction(11) AND Instruction(10);         -- 11
 
-    MuxB_Sel(0) <= (Instruction(4) AND isADD) OR (Instruction(7) AND Instruction(10));
-    MuxB_Sel(1) <= (Instruction(5) AND isADD) OR (Instruction(8) AND Instruction(10));
-    MuxB_Sel(2) <= (Instruction(6) AND isADD) OR (Instruction(9) AND Instruction(10));
+
+    -- ALU control (ADD / AND)
+
+    AddSub <= '1' when isNEG = '1' else 
+            Instruction(0) when isALU = '1' else 
+            '0';    -- 0 = ADD, 1 = AND
+
+    -- Register enable
+
+    RegEn <= isALU OR isNEG OR isMOVI;
+
+
+    -- Immediate handling
+
+    ImmMuxSel <= isMOVI;
+
+    -- Jump control
+-- Jump control (Bit 3 = '0' for JZR, Bit 3 = '1' for JNEG)
+
+    JumpFlag <= isJZR AND ( (Zero AND NOT Instruction(3)) OR (Negative AND Instruction(3)) );
+
+    -- Mux A selection
+
+    MuxA_Sel <= Instruction(9 downto 7);
+
+    -- Mux B selection
+
+    MuxB_Sel <= Instruction(6 downto 4);
 
 end Behavioral;
