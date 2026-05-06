@@ -4,7 +4,7 @@ use ieee.numeric_std.all;
 
 entity sevenseg_rom is
     port (
-        address : in std_logic_vector (3 downto 0);
+        address : in std_logic_vector (4 downto 0);
         data : out std_logic_vector (6 downto 0));
 end sevenseg_rom;
 
