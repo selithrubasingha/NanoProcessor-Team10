@@ -16,7 +16,7 @@ end nanoprocessor;
 
 architecture Structural of nanoprocessor is
 
-    ------------------------------------------------------------------
+------------------------------------------------------------------
     -- COMPONENT DECLARATIONS
     ------------------------------------------------------------------
     
@@ -27,16 +27,52 @@ architecture Structural of nanoprocessor is
         );
     end component;
 
-    -- NEW COMPONENT: Signed 7-Segment Controller
+    -- KEEP THIS (From your display branch)
     component Signed_7Seg_Controller
         Port (
-            Clk         : in  STD_LOGIC; -- Needs FAST clock
+            Clk         : in  STD_LOGIC;
             Reset       : in  STD_LOGIC;
             Reg_Data    : in  STD_LOGIC_VECTOR (3 downto 0);
             SevenSeg    : out STD_LOGIC_VECTOR (6 downto 0);
             Anode       : out STD_LOGIC_VECTOR (3 downto 0)
         );
     end component;
+
+    -- [KEEP YOUR OTHER COMPONENTS HERE: PC, ROM, DECODER, REG_BANK, MUXES, ADDER]
+
+    ------------------------------------------------------------------
+    -- INTERNAL SIGNALS
+    ------------------------------------------------------------------
+    
+    signal clk_slow : STD_LOGIC;
+    signal InstructionBus : STD_LOGIC_VECTOR(11 downto 0);
+
+    signal PCCurrAddr : STD_LOGIC_VECTOR(2 downto 0);
+    signal PCNextAddr : STD_LOGIC_VECTOR(2 downto 0);
+    signal PCPlusOne  : STD_LOGIC_VECTOR(2 downto 0);
+
+    signal MuxA_Out   : STD_LOGIC_VECTOR(3 downto 0);
+    signal MuxB_Out   : STD_LOGIC_VECTOR(3 downto 0);
+    signal ALU_Result : STD_LOGIC_VECTOR(3 downto 0);
+    signal DataBus    : STD_LOGIC_VECTOR(3 downto 0);
+
+    signal ALU_Zero     : STD_LOGIC;
+    signal ALU_Overflow : STD_LOGIC;
+    signal ALU_Negative : STD_LOGIC; -- KEEP THIS (Needed for sign flag!)
+
+    signal RegSel    : STD_LOGIC_VECTOR(2 downto 0);
+    signal RegEn     : STD_LOGIC;
+    signal MuxA_Sel  : STD_LOGIC_VECTOR(2 downto 0);
+    signal MuxB_Sel  : STD_LOGIC_VECTOR(2 downto 0);
+    signal ALUop_Sig : STD_LOGIC_VECTOR(3 downto 0); -- NEW: Their control signal
+    signal ImmVal    : STD_LOGIC_VECTOR(3 downto 0);
+    signal ImmMuxSel : STD_LOGIC;
+    signal JumpFlag  : STD_LOGIC;
+    signal JumpAddr  : STD_LOGIC_VECTOR(2 downto 0);
+
+    signal R0, R1, R2, R3, R4, R5, R6, R7 : STD_LOGIC_VECTOR(3 downto 0);
+
+    signal seg_out : std_logic_vector(6 downto 0);
 
     component program_counter
         Port (
@@ -58,14 +94,18 @@ architecture Structural of nanoprocessor is
         Port (
             Instruction : in  STD_LOGIC_VECTOR(11 downto 0);
             Zero        : in  STD_LOGIC;
+
             RegSel      : out STD_LOGIC_VECTOR(2 downto 0);
             RegEn       : out STD_LOGIC;
             Negative    : in  STD_LOGIC;
             MuxA_Sel    : out STD_LOGIC_VECTOR(2 downto 0);
             MuxB_Sel    : out STD_LOGIC_VECTOR(2 downto 0);
-            AddSub      : out STD_LOGIC;
+
+            ALUop       : out STD_LOGIC_VECTOR(3 downto 0);
+
             ImmVal      : out STD_LOGIC_VECTOR(3 downto 0);
             ImmMuxSel   : out STD_LOGIC;
+
             JumpFlag    : out STD_LOGIC;
             JumpAddr    : out STD_LOGIC_VECTOR(2 downto 0)
         );
@@ -97,11 +137,11 @@ architecture Structural of nanoprocessor is
         );
     end component;
 
-    component add_sub_4bit
+    component alu_4bit
         Port (
             A        : in  STD_LOGIC_VECTOR(3 downto 0);
             B        : in  STD_LOGIC_VECTOR(3 downto 0);
-            AddSub   : in  STD_LOGIC;
+            ALUop    : in  STD_LOGIC_VECTOR(3 downto 0);
             Result   : out STD_LOGIC_VECTOR(3 downto 0);
             Overflow : out STD_LOGIC;
             Zero     : out STD_LOGIC;
@@ -211,19 +251,20 @@ begin
             Instruction => InstructionBus
         );
 
-    DECODER : instruction_decoder
+DECODER : instruction_decoder
         port map (
-            Instruction => InstructionBus, 
+            Instruction => InstructionBus,
             Zero        => ALU_Zero,
-            RegSel      => RegSel, 
+            Negative    => ALU_Negative, -- MUST keep this for Jump logic!
+            RegSel      => RegSel,
             RegEn       => RegEn,
-            Negative    => ALU_Negative,
-            MuxA_Sel    => MuxA_Sel, 
+            MuxA_Sel    => MuxA_Sel,
             MuxB_Sel    => MuxB_Sel,
-            AddSub      => AddSub, 
+            ALUop       => ALUop_Sig,    -- Using the new 4-bit control
             ImmVal      => ImmVal,
-            ImmMuxSel   => ImmMuxSel, 
-            JumpFlag    => JumpFlag, 
+            ImmMuxSel   => ImmMuxSel,
+            JumpFlag    => JumpFlag,
+           
             JumpAddr    => JumpAddr
         );
 
@@ -252,13 +293,13 @@ begin
             Y   => MuxB_Out
         );
 
-    ALU : add_sub_4bit
+ALU : alu_4bit
         port map (
-            A        => MuxA_Out, 
-            B        => MuxB_Out, 
-            AddSub   => AddSub,
-            Result   => ALU_Result, 
-            Overflow => ALU_Overflow, 
+            A        => MuxA_Out,
+            B        => MuxB_Out,
+            ALUop    => ALUop_Sig,
+            Result   => ALU_Result,
+            Overflow => ALU_Overflow,
             Zero     => ALU_Zero,
             Negative => ALU_Negative
         );
@@ -296,6 +337,5 @@ begin
     ZeroFlag <= ALU_Zero;
     Overflow <= ALU_Overflow;
     NegFlag <= ALU_Negative;
-
 
 end Structural;
