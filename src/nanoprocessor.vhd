@@ -284,11 +284,7 @@ begin
             Y   => PCNextAddr
         );
         
-    SEG7 : sevenseg_rom
-        port map (
-            address => R7, 
-            data    => seg_out
-        );
+
 
     ------------------------------------------------------------------
     -- OUTPUT WIRING
