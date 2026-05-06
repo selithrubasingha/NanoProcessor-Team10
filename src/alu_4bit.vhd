@@ -4,12 +4,13 @@ use IEEE.STD_LOGIC_UNSIGNED.ALL;
 
 entity alu_4bit is
     Port (
-        A      : in  STD_LOGIC_VECTOR(3 downto 0);
-        B      : in  STD_LOGIC_VECTOR(3 downto 0);
-        ALUop  : in  STD_LOGIC_VECTOR(3 downto 0);
-        Result : out STD_LOGIC_VECTOR(3 downto 0);
-        Zero   : out STD_LOGIC;
-        Overflow : out STD_LOGIC
+        A        : in  STD_LOGIC_VECTOR(3 downto 0);
+        B        : in  STD_LOGIC_VECTOR(3 downto 0);
+        ALUop    : in  STD_LOGIC_VECTOR(3 downto 0);
+        Result   : out STD_LOGIC_VECTOR(3 downto 0);
+        Zero     : out STD_LOGIC;
+        Overflow : out STD_LOGIC;
+        Negative : out STD_LOGIC  -- RESTORED!
     );
 end alu_4bit;
 
@@ -22,7 +23,6 @@ begin
 process(A, B, ALUop)
 begin
     case ALUop is
-
         when "0000" =>  -- ADD
             res <= A + B;
 
@@ -40,13 +40,15 @@ begin
 
         when others =>
             res <= (others => '0');
-
     end case;
 end process;
 
 Result <= res;
 
 Zero <= '1' when res = "0000" else '0';
+
+-- Negative flag is always the Most Significant Bit (MSB)
+Negative <= res(3);
 
 -- simple overflow 
 Overflow <= '0';

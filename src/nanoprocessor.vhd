@@ -40,39 +40,7 @@ architecture Structural of nanoprocessor is
 
     -- [KEEP YOUR OTHER COMPONENTS HERE: PC, ROM, DECODER, REG_BANK, MUXES, ADDER]
 
-    ------------------------------------------------------------------
-    -- INTERNAL SIGNALS
-    ------------------------------------------------------------------
-    
-    signal clk_slow : STD_LOGIC;
-    signal InstructionBus : STD_LOGIC_VECTOR(11 downto 0);
-
-    signal PCCurrAddr : STD_LOGIC_VECTOR(2 downto 0);
-    signal PCNextAddr : STD_LOGIC_VECTOR(2 downto 0);
-    signal PCPlusOne  : STD_LOGIC_VECTOR(2 downto 0);
-
-    signal MuxA_Out   : STD_LOGIC_VECTOR(3 downto 0);
-    signal MuxB_Out   : STD_LOGIC_VECTOR(3 downto 0);
-    signal ALU_Result : STD_LOGIC_VECTOR(3 downto 0);
-    signal DataBus    : STD_LOGIC_VECTOR(3 downto 0);
-
-    signal ALU_Zero     : STD_LOGIC;
-    signal ALU_Overflow : STD_LOGIC;
-    signal ALU_Negative : STD_LOGIC; -- KEEP THIS (Needed for sign flag!)
-
-    signal RegSel    : STD_LOGIC_VECTOR(2 downto 0);
-    signal RegEn     : STD_LOGIC;
-    signal MuxA_Sel  : STD_LOGIC_VECTOR(2 downto 0);
-    signal MuxB_Sel  : STD_LOGIC_VECTOR(2 downto 0);
-    signal ALUop_Sig : STD_LOGIC_VECTOR(3 downto 0); -- NEW: Their control signal
-    signal ImmVal    : STD_LOGIC_VECTOR(3 downto 0);
-    signal ImmMuxSel : STD_LOGIC;
-    signal JumpFlag  : STD_LOGIC;
-    signal JumpAddr  : STD_LOGIC_VECTOR(2 downto 0);
-
-    signal R0, R1, R2, R3, R4, R5, R6, R7 : STD_LOGIC_VECTOR(3 downto 0);
-
-    signal seg_out : std_logic_vector(6 downto 0);
+   
 
     component program_counter
         Port (
@@ -207,7 +175,7 @@ architecture Structural of nanoprocessor is
     signal RegEn          : STD_LOGIC;
     signal MuxA_Sel       : STD_LOGIC_VECTOR(2 downto 0);
     signal MuxB_Sel       : STD_LOGIC_VECTOR(2 downto 0);
-    signal AddSub         : STD_LOGIC;
+    signal ALUop_Sig     : STD_LOGIC_VECTOR(3 downto 0);
     signal ImmVal         : STD_LOGIC_VECTOR(3 downto 0);
     signal ImmMuxSel      : STD_LOGIC;
     signal JumpFlag       : STD_LOGIC;
