@@ -40,8 +40,6 @@ architecture Structural of nanoprocessor is
 
     -- [KEEP YOUR OTHER COMPONENTS HERE: PC, ROM, DECODER, REG_BANK, MUXES, ADDER]
 
-   
-
     component program_counter
         Port (
             NextAddr : in  STD_LOGIC_VECTOR(2 downto 0);
@@ -62,20 +60,22 @@ architecture Structural of nanoprocessor is
         Port (
             Instruction : in  STD_LOGIC_VECTOR(11 downto 0);
             Zero        : in  STD_LOGIC;
-
+            StackFull   : in  STD_LOGIC;
+            StackEmpty  : in  STD_LOGIC;
             RegSel      : out STD_LOGIC_VECTOR(2 downto 0);
             RegEn       : out STD_LOGIC;
             Negative    : in  STD_LOGIC;
             MuxA_Sel    : out STD_LOGIC_VECTOR(2 downto 0);
             MuxB_Sel    : out STD_LOGIC_VECTOR(2 downto 0);
-
             ALUop       : out STD_LOGIC_VECTOR(3 downto 0);
-
             ImmVal      : out STD_LOGIC_VECTOR(3 downto 0);
-            ImmMuxSel   : out STD_LOGIC;
-
+            WB_sel      : out STD_LOGIC_VECTOR(1 downto 0);
             JumpFlag    : out STD_LOGIC;
-            JumpAddr    : out STD_LOGIC_VECTOR(2 downto 0)
+            JumpAddr    : out STD_LOGIC_VECTOR(2 downto 0);
+            StackWrite  : out STD_LOGIC;
+            StackRead   : out STD_LOGIC;
+            SP_inc      : out STD_LOGIC;
+            SP_dec      : out STD_LOGIC
         );
     end component;
 
@@ -86,21 +86,14 @@ architecture Structural of nanoprocessor is
             RegEn  : in  STD_LOGIC;
             Clk    : in  STD_LOGIC;
             Reset  : in  STD_LOGIC;
-            R0     : out STD_LOGIC_VECTOR(3 downto 0);
-            R1     : out STD_LOGIC_VECTOR(3 downto 0);
-            R2     : out STD_LOGIC_VECTOR(3 downto 0);
-            R3     : out STD_LOGIC_VECTOR(3 downto 0);
-            R4     : out STD_LOGIC_VECTOR(3 downto 0);
-            R5     : out STD_LOGIC_VECTOR(3 downto 0);
-            R6     : out STD_LOGIC_VECTOR(3 downto 0);
-            R7     : out STD_LOGIC_VECTOR(3 downto 0)
+            R0, R1, R2, R3, R4, R5, R6, R7 : out STD_LOGIC_VECTOR(3 downto 0)
         );
     end component;
 
     component mux_8way_4bit
         Port (
-            I0,I1,I2,I3,I4,I5,I6,I7 : in STD_LOGIC_VECTOR(3 downto 0);
-            Sel : in STD_LOGIC_VECTOR(2 downto 0);
+            I0, I1, I2, I3, I4, I5, I6, I7 : in  STD_LOGIC_VECTOR(3 downto 0);
+            Sel : in  STD_LOGIC_VECTOR(2 downto 0);
             Y   : out STD_LOGIC_VECTOR(3 downto 0)
         );
     end component;
@@ -117,11 +110,26 @@ architecture Structural of nanoprocessor is
         );
     end component;
 
-    component mux_2way_4bit
+    component stack_unit
+        Port (
+            Clk        : in  STD_LOGIC;
+            Reset      : in  STD_LOGIC;
+            DataIn     : in  STD_LOGIC_VECTOR(3 downto 0);
+            DataOut    : out STD_LOGIC_VECTOR(3 downto 0);
+            StackWrite : in  STD_LOGIC;
+            SP_inc     : in  STD_LOGIC;
+            SP_dec     : in  STD_LOGIC;
+            StackFull  : out STD_LOGIC;
+            StackEmpty : out STD_LOGIC
+        );
+    end component;
+
+    component mux_3way_4bit
         Port (
             A   : in  STD_LOGIC_VECTOR(3 downto 0);
             B   : in  STD_LOGIC_VECTOR(3 downto 0);
-            Sel : in  STD_LOGIC;
+            C   : in  STD_LOGIC_VECTOR(3 downto 0);
+            Sel : in  STD_LOGIC_VECTOR(1 downto 0);
             Y   : out STD_LOGIC_VECTOR(3 downto 0)
         );
     end component;
@@ -150,7 +158,7 @@ architecture Structural of nanoprocessor is
     --     );
     -- end component;
 
-    ------------------------------------------------------------------
+------------------------------------------------------------------
     -- INTERNAL SIGNALS
     ------------------------------------------------------------------
     
@@ -169,7 +177,7 @@ architecture Structural of nanoprocessor is
 
     signal ALU_Zero       : STD_LOGIC;
     signal ALU_Overflow   : STD_LOGIC;
-    signal ALU_Negative : STD_LOGIC;
+    signal ALU_Negative   : STD_LOGIC;
 
     signal RegSel         : STD_LOGIC_VECTOR(2 downto 0);
     signal RegEn          : STD_LOGIC;
@@ -177,11 +185,20 @@ architecture Structural of nanoprocessor is
     signal MuxB_Sel       : STD_LOGIC_VECTOR(2 downto 0);
     signal ALUop_Sig     : STD_LOGIC_VECTOR(3 downto 0);
     signal ImmVal         : STD_LOGIC_VECTOR(3 downto 0);
-    signal ImmMuxSel      : STD_LOGIC;
     signal JumpFlag       : STD_LOGIC;
     signal JumpAddr       : STD_LOGIC_VECTOR(2 downto 0);
 
     signal R0, R1, R2, R3, R4, R5, R6, R7 : STD_LOGIC_VECTOR(3 downto 0);
+
+    -- NEW: SURGICALLY GRAFTED STACK SIGNALS
+    signal StackData : STD_LOGIC_VECTOR(3 downto 0);
+    signal WB_sel    : STD_LOGIC_VECTOR(1 downto 0); -- Replaces ImmMuxSel
+    signal SWrite    : STD_LOGIC;
+    signal SRead     : STD_LOGIC;
+    signal SInc      : STD_LOGIC;
+    signal SDec      : STD_LOGIC;
+    signal SFull     : STD_LOGIC;
+    signal SEmpty    : STD_LOGIC;
 
 begin
 
@@ -223,17 +240,22 @@ DECODER : instruction_decoder
         port map (
             Instruction => InstructionBus,
             Zero        => ALU_Zero,
-            Negative    => ALU_Negative, -- MUST keep this for Jump logic!
+Negative    => ALU_Negative, -- Kept your protected signal name!
+            StackFull   => SFull,        -- Added from friend
+            StackEmpty  => SEmpty,       -- Added from friend
             RegSel      => RegSel,
             RegEn       => RegEn,
             MuxA_Sel    => MuxA_Sel,
             MuxB_Sel    => MuxB_Sel,
             ALUop       => ALUop_Sig,    -- Using the new 4-bit control
             ImmVal      => ImmVal,
-            ImmMuxSel   => ImmMuxSel,
+            WB_sel      => WB_sel,       -- The new Write-Back select
             JumpFlag    => JumpFlag,
-           
-            JumpAddr    => JumpAddr
+            JumpAddr    => JumpAddr,
+            StackWrite  => SWrite,       -- New stack control
+            StackRead   => SRead,        -- New stack control
+            SP_inc      => SInc,         -- New stack control
+            SP_dec      => SDec          -- New stack control
         );
 
     REGBANK : register_bank
@@ -245,6 +267,19 @@ DECODER : instruction_decoder
             Reset  => Reset,
             R0     => R0, R1 => R1, R2 => R2, R3 => R3,
             R4     => R4, R5 => R5, R6 => R6, R7 => R7
+        );
+
+    STACK : stack_unit
+        port map (
+            Clk        => clk_slow,
+            Reset      => Reset,
+            DataIn     => MuxA_Out,
+            DataOut    => StackData,
+            StackWrite => SWrite,
+            SP_inc     => SInc,
+            SP_dec     => SDec,
+            StackFull  => SFull,
+            StackEmpty => SEmpty
         );
 
     MUX_A : mux_8way_4bit
@@ -266,17 +301,18 @@ ALU : alu_4bit
             A        => MuxA_Out,
             B        => MuxB_Out,
             ALUop    => ALUop_Sig,
-            Result   => ALU_Result,
+Result   => ALU_Result,
             Overflow => ALU_Overflow,
             Zero     => ALU_Zero,
             Negative => ALU_Negative
         );
 
-    IMM_MUX : mux_2way_4bit
+    WB_MUX : mux_3way_4bit
         port map (
-            A   => ALU_Result, 
-            B   => ImmVal, 
-            Sel => ImmMuxSel, 
+            A   => ALU_Result,   -- Your protected ALU signal!
+            B   => ImmVal,
+            C   => StackData,    -- The new stack data line!
+            Sel => WB_sel,       -- The new 2-bit selector from the decoder!
             Y   => DataBus
         );
 

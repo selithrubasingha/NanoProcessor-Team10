@@ -13,35 +13,34 @@ begin
     process(Addr)
     begin
         case Addr is
-            -- Line 0: MOVI R7, 2  (Opcode 10, Dest 111, Imm 0010)
-            when "000" => Instruction <= "101110000010";
+            -- Line 0: MOVI R7, -6 (1010) -> Load initial value
+            when "000" => Instruction <= "101110001010";
 
-            -- Line 1: MOVI R1, 4  (Opcode 10, Dest 001, Imm 0100)
-            when "001" => Instruction <= "100010000100";
+            -- Line 1: PUSH R7 -> Save -6 to the stack
+            when "001" => Instruction <= "101111000000";
 
-            -- Line 2: ADD R7, R1  (Opcode 00, Dest 111, Src 001, ALUop 0000)
-            when "010" => Instruction <= "001110010000";
+            -- Line 2: POP R1 -> Retrieve -6 from the stack into R1
+            when "010" => Instruction <= "100011010000";
 
-            -- Line 3: SUB R7, R1  (Opcode 00, Dest 111, Src 001, ALUop 0001)
-            when "011" => Instruction <= "001110010001";
+            -- Line 3: ADD R7, R1 -> -6 + -6 = 4 (Overflow handles it!)
+            when "011" => Instruction <= "001110010000";
 
-            -- Line 4: SUB R7, R1  (Opcode 00, Dest 111, Src 001, ALUop 0001)
-            when "100" => Instruction <= "001110010001";
+            -- Line 4: OR R7, R1 -> 4 OR -6 = -2
+            when "100" => Instruction <= "001110010011";
 
-            -- Line 5: XOR R7, R1  (Opcode 00, Dest 111, Src 001, ALUop 0100)
+            -- Line 5: XOR R7, R1 -> -2 XOR -6 = 4
             when "101" => Instruction <= "001110010100";
 
-            -- Line 6: OR R7, R1   (Opcode 00, Dest 111, Src 001, ALUop 0011)
-            when "110" => Instruction <= "001110010011";
+            -- Line 6: AND R7, R1 -> 4 AND -6 = 0
+            when "110" => Instruction <= "001110010010";
 
-            -- Line 7: AND R7, R1  (Opcode 00, Dest 111, Src 001, ALUop 0010)
-            when "111" => Instruction <= "001110010010";
+            -- Line 7: SUB R7, R1 -> 0 - (-6) = 6
+            when "111" => Instruction <= "001110010001";
 
             when others => Instruction <= (others => '0');
         end case;
     end process;
 end Behavioral;
-
 -- library IEEE;
 -- use IEEE.STD_LOGIC_1164.ALL;
 
