@@ -59,9 +59,9 @@ begin
     WB_sel(1) <= validPOP;
     WB_sel(0) <= isMOVI;
 
-    MuxA_Sel(0) <= Instruction(7) AND isALU;
-    MuxA_Sel(1) <= Instruction(8) AND isALU;
-    MuxA_Sel(2) <= Instruction(9) AND isALU;
+    MuxA_Sel(0) <= Instruction(7) AND (isALU OR isPUSH);
+    MuxA_Sel(1) <= Instruction(8) AND (isALU OR isPUSH);
+    MuxA_Sel(2) <= Instruction(9) AND (isALU OR isPUSH);
 
     MuxB_Sel(0) <= (Instruction(4) AND isALU) OR (Instruction(7) AND (isNEG OR isJZR));
     MuxB_Sel(1) <= (Instruction(5) AND isALU) OR (Instruction(8) AND (isNEG OR isJZR));
