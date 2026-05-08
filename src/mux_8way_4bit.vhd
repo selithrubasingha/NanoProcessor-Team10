@@ -1,15 +1,11 @@
 ---------------------------------------------------------------------------
 -- mux_8way_4bit.vhd
--- 8-to-1 multiplexer, 4 bits wide.
--- Takes 8 four-bit inputs (one per register) and a 3-bit select.
--- Outputs the selected register's 4-bit value.
---
 -- Two instances are used in the nanoprocessor:
 --   MUX_A  :  select signal = MuxA_Sel from decoder
 --              feeds operand A of the Add/Sub unit
 --   MUX_B  :  select signal = MuxB_Sel from decoder
 --              feeds operand B of the Add/Sub unit
---              (also used for JZR zero-check via the ALU)
+--             
 ---------------------------------------------------------------------------
 library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
