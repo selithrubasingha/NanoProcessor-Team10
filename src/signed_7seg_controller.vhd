@@ -45,7 +45,7 @@ begin
     end process;
 
     -- Using bit 15 provides a faster refresh rate to reduce ghosting
-    display_sel <= refresh_cnt(15); 
+    display_sel <= refresh_cnt(1); 
 
     -- 3. UPDATED: Logic for Sign and Anode Control[cite: 1, 2]
     process(display_sel, Reg_Data, abs_val)
