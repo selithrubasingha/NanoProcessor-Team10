@@ -16,9 +16,7 @@ end nanoprocessor;
 
 architecture Structural of nanoprocessor is
 
-------------------------------------------------------------------
-    -- COMPONENT DECLARATIONS
-    ------------------------------------------------------------------
+
     
     component Slow_Clk
         Port (
@@ -27,7 +25,7 @@ architecture Structural of nanoprocessor is
         );
     end component;
 
-    -- KEEP THIS (From your display branch)
+  
     component Signed_7Seg_Controller
         Port (
             Clk         : in  STD_LOGIC;
@@ -38,7 +36,7 @@ architecture Structural of nanoprocessor is
         );
     end component;
 
-    -- [KEEP YOUR OTHER COMPONENTS HERE: PC, ROM, DECODER, REG_BANK, MUXES, ADDER]
+   
 
     component program_counter
         Port (
@@ -158,9 +156,7 @@ architecture Structural of nanoprocessor is
     --     );
     -- end component;
 
-------------------------------------------------------------------
-    -- INTERNAL SIGNALS
-    ------------------------------------------------------------------
+
     
     signal clk_slow : STD_LOGIC;
     signal seg_out  : std_logic_vector(6 downto 0);
@@ -190,9 +186,8 @@ architecture Structural of nanoprocessor is
 
     signal R0, R1, R2, R3, R4, R5, R6, R7 : STD_LOGIC_VECTOR(3 downto 0);
 
-    -- NEW: SURGICALLY GRAFTED STACK SIGNALS
     signal StackData : STD_LOGIC_VECTOR(3 downto 0);
-    signal WB_sel    : STD_LOGIC_VECTOR(1 downto 0); -- Replaces ImmMuxSel
+    signal WB_sel    : STD_LOGIC_VECTOR(1 downto 0); 
     signal SWrite    : STD_LOGIC;
     signal SRead     : STD_LOGIC;
     signal SInc      : STD_LOGIC;
@@ -202,20 +197,18 @@ architecture Structural of nanoprocessor is
 
 begin
 
-    ------------------------------------------------------------------
-    -- COMPONENT INSTANTIATIONS
-    ------------------------------------------------------------------
+  
 
     CLOCK_DIVIDER : Slow_Clk
         port map (
-            Clk_in  => Clk,       -- Raw 100 MHz from the board
-            Clk_out => clk_slow   -- The 1 Hz slowed down clock
+            Clk_in  => Clk,       
+            Clk_out => clk_slow   
         );
 
-    -- NEW: Display Controller on the FAST clock
+   
     DISPLAY_CTRL : Signed_7Seg_Controller
         port map (
-            Clk      => Clk,      -- RAW 100 MHz here for multiplexing
+            Clk      => Clk,     
             Reset    => Reset,
             Reg_Data => R7,
             SevenSeg => SevenSeg,
@@ -333,9 +326,6 @@ Result   => ALU_Result,
         
 
 
-    ------------------------------------------------------------------
-    -- OUTPUT WIRING
-    ------------------------------------------------------------------
     
     R7_Out   <= R7;
     ZeroFlag <= ALU_Zero;
