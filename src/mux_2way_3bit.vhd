@@ -1,14 +1,4 @@
----------------------------------------------------------------------------
--- mux_2way_3bit.vhd
---Layer 2 – Functional Unit
--- 2-to-1 multiplexer, 3 bits wide.
---
--- Role in the nanoprocessor:
---   Selects the NEXT Program Counter value:
---     Sel = '0'  ->  Y = A = PCPlusOne   (normal sequential execution)
---     Sel = '1'  ->  Y = B = JumpAddr    (taken branch from JZR)
---   Sel is driven by JumpFlag from the instruction decoder.
----------------------------------------------------------------------------
+
 library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
 
