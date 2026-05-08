@@ -1,6 +1,5 @@
 ---------------------------------------------------------------------------
 -- register_4bit.vhd
--- Layer 2 – Functional Unit
 -- 4-bit parallel-load register built from four d_flip_flop instances.
 -- All four flip-flops share the same Clk, Reset, and Enable signals.
 -- When Enable='1' on the rising clock edge, all four bits latch D.
