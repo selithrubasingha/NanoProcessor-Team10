@@ -1,6 +1,5 @@
 ---------------------------------------------------------------------------
 -- mux_8way_4bit.vhd
--- Layer 2 – Functional Unit
 -- 8-to-1 multiplexer, 4 bits wide.
 -- Takes 8 four-bit inputs (one per register) and a 3-bit select.
 -- Outputs the selected register's 4-bit value.
